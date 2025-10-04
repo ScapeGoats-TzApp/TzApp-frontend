@@ -2,7 +2,7 @@ import { Component, signal, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NavigationComponent } from '../../components/navigation';
-import { CalendarPickerComponent } from '../../components/calendar-picker/calendar-picker.component';
+import { SearchPageComponent } from '../../components/search-page/search-page.component';
 import { WeatherService, WeatherResponse, ForecastResponse, PlacePrediction } from '../../services/weather.service';
 import { GeolocationService, GeolocationCoordinates, GeolocationError } from '../../services/geolocation.service';
 import { StorageService, SavedLocation } from '../../services/storage.service';
@@ -10,7 +10,7 @@ import { StorageService, SavedLocation } from '../../services/storage.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NavigationComponent, CalendarPickerComponent],
+  imports: [CommonModule, NavigationComponent, SearchPageComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -464,5 +464,13 @@ export class HomePage implements OnInit {
     const url = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&zoom=12&level=surface&overlay=rain&menu=&message=&marker=true&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=${lat}&detailLon=${lng}&metricWind=default&metricTemp=default&radarRange=-1`;
     
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  getFormattedDate(): string {
+    const date = this.selectedDate();
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear();
+    return `${day}/${month}/${year} forecast`;
   }
 }
