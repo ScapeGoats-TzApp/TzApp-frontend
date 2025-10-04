@@ -1,1 +1,42 @@
-<p>chatbot-page works!</p>
+<div class="min-h-screen pb-24 flex flex-col chatbot-container">
+  <div class="max-w-[412px] w-full mx-auto px-[6px] pt-7 flex-1 flex flex-col">
+    <!-- Chat Messages Area -->
+    <div class="flex-1 overflow-y-auto mb-2">
+      <!-- Assistant Message -->
+      <div class="flex items-start gap-3 mb-4">
+        <!-- Avatar -->
+        <div class="flex-shrink-0">
+          <img 
+            src="https://api.builder.io/api/v1/image/assets/TEMP/3d85b47b961d90411b4c1a275be97159b551a8b5?width=208" 
+            alt="Assistant" 
+            class="w-[104px] h-[70px] object-contain"
+          />
+        </div>
+        
+        <!-- Message Bubble -->
+        <div class="flex-1 bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mt-4">
+          <p class="text-cyan font-bold text-xs uppercase leading-[10px] text-justify assistant-message-text">
+            Hello there! 🌟<br>
+            I'm your travel and future planning assistant, ready to help you design your next adventure or brainstorm exciting plans. Whether you're looking for vacation ideas, future goals, or just some fun suggestions, I'm here for it all!<br>
+            What's your next big idea? Let's get started!
+          </p>
+        </div>
+      </div>
+
+      <!-- User messages would appear here dynamically -->
+    </div>
+
+    <!-- Input Area -->
+    <div class="mt-auto">
+      <div class="relative bg-white/20 rounded-[20px] border-b border-cyan p-4">
+        <input 
+          type="text" 
+          placeholder="write here..." 
+          class="w-full bg-transparent text-navy-90 font-bold text-sm placeholder:text-goat-sky placeholder:lowercase focus:outline-none chat-input"
+        />
+      </div>
+    </div>
+  </div>
+
+  <app-navigation></app-navigation>
+</div>
