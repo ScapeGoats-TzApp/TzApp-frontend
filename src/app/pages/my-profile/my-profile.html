@@ -63,19 +63,22 @@
     </div>
 
     <!-- Theme Toggle -->
-    <div class="flex items-center justify-center gap-8 mb-4">
-      <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">THEME</span>
-      <button class="relative w-[77px] h-7 rounded-full border-2 border-navy bg-transparent">
-        <div class="absolute left-1 top-0.5 w-6 h-6 rounded-full border-3 border-cyan bg-white"></div>
-      </button>
-    </div>
+      <div class="flex items-center justify-center gap-8 mb-4">
+        <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">THEME</span>
+        <div class="relative">
+          <input type="checkbox" id="dark-mode-toggle" [checked]="isDarkTheme()" (change)="toggleTheme()" class="sr-only">
+            <label for="dark-mode-toggle" class="toggle" style="display: inline-block; width: 60px; height: 30px; background: #adbcdb; border-radius: 30px; position: relative; cursor: pointer; border: 2px solid #1e2223;">
+              <span style="position: absolute; top: 3px; left: 5px; width: 20px; height: 20px; background: #ffffff; border-radius: 50%; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+            </label>
+        </div>
+      </div>
 
     <!-- Terms and Conditions -->
     <button 
       (click)="openTermsPopup()"
-      class="w-full bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 mb-4 flex items-center justify-between hover:bg-cyan-light/30 transition-colors"
+      class="w-full bg-cyan-light/20 rounded-[30px] border-b border-cyan p-5 mb-4 flex items-center justify-between hover:bg-cyan-light/30 transition-colors"
     >
-      <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">TERMS AND CONDITIONS</span>
+      <span class="text-navy-90 font-bold text-2xl uppercase align-middle" style="letter-spacing: -0.24px;">TERMS AND CONDITIONS</span>
       <svg class="w-3 h-4" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289L6.34315 0.928932C5.95262 0.538408 5.31946 0.538408 4.92893 0.928932C4.53841 1.31946 4.53841 1.95262 4.92893 2.34315L10.5858 8L4.92893 13.6569C4.53841 14.0474 4.53841 14.6805 4.92893 15.0711C5.31946 15.4616 5.95262 15.4616 6.34315 15.0711L12.7071 8.70711ZM0 8V9H12V8V7H0V8Z" fill="#163252"/>
       </svg>
@@ -83,23 +86,23 @@
 
     <!-- Review Section -->
     <div class="relative">
-      <div class="bg-white/20 rounded-[20px] border-b border-cyan p-4 mb-4" style="background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(97, 136, 140, 0.20) 100%);">
+      <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
         <!-- Title -->
-        <h2 class="text-navy-90 font-bold text-2xl uppercase text-center mb-2" style="letter-spacing: -0.24px;">
+        <h2 class="text-navy-90 font-bold text-2xl uppercase text-left mb-2" style="letter-spacing: -0.24px;">
           LEAVE US A REVIEW...
         </h2>
         
         <!-- Subtitle -->
-        <p class="text-navy-50 font-bold text-xs uppercase text-center mb-4" style="letter-spacing: -0.11px; line-height: 10px;">
+        <!-- <p class="text-navy-50 font-bold text-xs uppercase text-center" style="letter-spacing: -0.11px; line-height: 10px;">
           WE'D LOVE TO HEAR FROM YOU!
-        </p>
+        </p> -->
 
         <!-- Text Area -->
         <textarea 
           [value]="reviewText()"
           (input)="onReviewTextChange($event)"
-          placeholder="type here......" 
-          class="w-full h-[200px] bg-transparent text-navy-50 font-bold text-xs placeholder:text-navy-50 placeholder:uppercase focus:outline-none resize-none"
+          placeholder="Type your feedback here..." 
+          class="w-full h-[200px] bg-transparent text-navy-50 font-bold text-xs placeholder:text-navy-50 placeholder:uppercase focus:outline-none resize-none mt-2"
           style="letter-spacing: -0.11px; line-height: 10px;"
         ></textarea>
       </div>
@@ -107,7 +110,7 @@
       <!-- Send Button -->
       <div class="flex justify-center">
         @if (reviewSent()) {
-          <div class="bg-green-500/20 rounded-[20px] border-b border-green-500 px-6 py-2 flex items-center gap-2">
+          <div class="bg-green-500/20 rounded-[20px] border-b border-green-500 px-6 py-2 mt-1 flex items-center gap-2">
             <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
@@ -158,7 +161,7 @@
       <!-- Popup Content -->
       <div class="relative bg-white/95 backdrop-blur-sm rounded-[20px] border border-cyan shadow-2xl max-w-[90vw] max-h-[90vh] overflow-hidden">
         <!-- Header -->
-        <div class="bg-cyan-light/20 border-b border-cyan p-4 flex items-center justify-between">
+        <div class="bg-cyan-light/20 text-center border-b border-cyan p-4 flex items-center justify-between">
           <h2 class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">
             TERMS AND CONDITIONS
           </h2>

@@ -1,3 +1,24 @@
+// CSS Variables for theming
+:root {
+  --bg-color: #ffffff;
+  --text-color: #163252;
+  --header-bg: #26658C;
+  --btn-bg: #00B4D8;
+  --btn-text: #ffffff;
+  --toggle-bg: #e5e7eb;
+  --toggle-circle: #ffffff;
+}
+
+:root.dark-theme {
+  --bg-color: #0f172a;
+  --text-color: #e2e8f0;
+  --header-bg: #1e293b;
+  --btn-bg: #14b8a6;
+  --btn-text: #0f172a;
+  --toggle-bg: #475569;
+  --toggle-circle: #0f172a;
+}
+
 // Profile page styles
 .profile-container {
   min-height: 100vh;
@@ -128,7 +149,7 @@
 .review-container {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(97, 136, 140, 0.20) 100%);
   border-radius: 20px;
-  border-bottom: 1px solid #00B4D8;
+  border-bottom: 1px solid #1e2223;
   padding: 1rem;
   margin-bottom: 1rem;
 }
@@ -202,3 +223,193 @@
   letter-spacing: -0.16px;
   line-height: 10px;
 }
+
+// :has(#dark-mode-toggle:checked) {
+//   --bg-color: #0f172a;
+//   --text-color: #e2e8f0;
+//   --header-bg: #1e293b;
+//   --btn-bg: #14b8a6;
+//   --btn-text: #0f172a;
+//   --toggle-bg: #475569;
+//   --toggle-circle: #0f172a;
+// }
+
+#dark-mode-toggle {
+  display: none;
+} 
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.toggle {
+  display: inline-block !important;
+  width: 60px !important;
+  height: 30px !important;
+  background: #9ba7c0 !important;
+  border-radius: 30px !important;
+  position: relative !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  border: 2px solid #1e2223 !important;
+}
+
+.toggle span {
+  position: absolute !important;
+  top: 3px !important;
+  left: 5px !important;
+  width: 20px !important;
+  height: 20px !important;
+  background: #ffffff !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+}
+
+#dark-mode-toggle:checked + .toggle {
+  background: #475569 !important;
+  border-color: #1e2223 !important;
+}
+
+#dark-mode-toggle:checked + .toggle span {
+  transform: translateX(30px) !important;
+  background: #0f172a !important;
+}
+
+// Dark Theme Styles
+:root.dark-theme {
+  .profile-container {
+    background: linear-gradient(180deg, #1a1a1a 13.52%, rgba(0, 0, 0, 0.40) 76.72%, rgba(20, 20, 20, 0.68) 87.94%, #000000 100%);
+  }
+  
+  .profile-title {
+    color: #e0e0e0;
+    text-shadow: 0 2px 7px #000000;
+  }
+  
+  .theme-label {
+    color: #e0e0e0;
+  }
+  
+  .terms-text {
+    color: #e0e0e0;
+  }
+  
+  .review-title {
+    color: #e0e0e0;
+  }
+  
+  .review-subtitle {
+    color: #e0e0e0;
+  }
+  
+  .review-textarea {
+    color: #e0e0e0;
+    
+    &::placeholder {
+      color: #e0e0e0;
+    }
+  }
+  
+  .send-text {
+    color: #e0e0e0;
+  }
+  
+  .theme-labels {
+    color: #e0e0e0;
+  }
+}
+
+// Light Theme Styles (default)
+:root.light-theme {
+  .profile-container {
+    background: linear-gradient(180deg, #FFF 13.52%, rgba(167, 235, 242, 0.40) 76.72%, rgba(84, 172, 191, 0.68) 87.94%, #26658C 100%);
+  }
+}
+
+.review-container {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(97, 136, 140, 0.25) 100%);
+  border-radius: 15px; /* Slightly smaller border radius */
+  border-bottom: 1px solid #1e2223;
+  padding: 0.75rem 1rem; /* Reduced padding for a tighter layout */
+  margin-bottom: 1rem;
+}
+
+.review-title {
+  color: #163252;
+  font-weight: bold;
+  font-size: 1.25rem; /* Slightly smaller title */
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 0.25rem; /* Reduced margin */
+  letter-spacing: -0.24px;
+}
+
+.review-subtitle {
+  color: #163252;
+  font-weight: bold;
+  font-size: 0.875rem; /* Adjusted subtitle size */
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 1rem; /* Reduced bottom margin */
+  letter-spacing: -0.11px;
+  line-height: 14px; /* Adjusted line-height */
+}
+
+.review-textarea {
+  width: 100%;
+  height: 150px; /* Reduced height for a more compact feel */
+  background: transparent;
+  color: #163252;
+  font-weight: bold;
+  font-size: 0.875rem; /* Adjusted text size */
+  text-transform: uppercase;
+  letter-spacing: -0.11px;
+  line-height: 16px; /* Adjusted line-height */
+  border: none;
+  outline: none;
+  resize: none;
+  
+  &::placeholder {
+    color: #163252;
+    text-transform: uppercase;
+  }
+}
+
+.send-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.send-button {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 15px; /* Slightly smaller radius */
+  border-bottom: 1px solid #00B4D8;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.send-text {
+  color: #163252;
+  font-weight: bold;
+  font-size: 0.875rem; /* Adjusted text size */
+  text-transform: uppercase;
+  letter-spacing: -0.16px;
+  line-height: 14px; /* Adjusted line-height */
+}
+
