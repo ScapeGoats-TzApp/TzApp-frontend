@@ -6,6 +6,122 @@
   letter-spacing: -0.11px;
 }
 
+.user-message-text {
+  letter-spacing: -0.11px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  white-space: pre-wrap;
+}
+
 .chat-input {
   letter-spacing: -1.05px;
+}
+
+// Custom scrollbar for messages container
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(84, 172, 191, 0.5);
+  border-radius: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(84, 172, 191, 0.7);
+}
+
+// Animation for typing indicator
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1.4s infinite;
+}
+
+// Smooth transitions for buttons
+button {
+  transition: all 0.2s ease-in-out;
+}
+
+// Focus styles for input
+.chat-input:focus {
+  box-shadow: 0 0 0 2px rgba(84, 172, 191, 0.3);
+}
+
+// Message bubble improvements
+.user-message-text {
+  min-height: 1.2em;
+  line-height: 1.4;
+}
+
+.assistant-message-text {
+  min-height: 1.2em;
+  line-height: 1.4;
+}
+
+// Ensure proper text wrapping in message bubbles
+.bg-white\/30, .bg-cyan-light\/20 {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+// User avatar styling
+.rounded-full {
+  border: 2px solid rgba(84, 172, 191, 0.3);
+}
+
+// Save dialog styling
+.fixed.inset-0 {
+  backdrop-filter: blur(4px);
+}
+
+// Saved chats sidebar styling
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+// Chat management buttons
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+// Hover effects for saved chat items
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+// Custom scrollbar for saved chats
+.max-h-96::-webkit-scrollbar {
+  width: 4px;
+}
+
+.max-h-96::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.max-h-96::-webkit-scrollbar-thumb {
+  background: rgba(84, 172, 191, 0.5);
+  border-radius: 2px;
+}
+
+.max-h-96::-webkit-scrollbar-thumb:hover {
+  background: rgba(84, 172, 191, 0.7);
 }
