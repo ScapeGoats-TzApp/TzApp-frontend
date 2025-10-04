@@ -1,15 +1,15 @@
 import { Routes } from '@angular/router';
-import { LoadingPage } from './pages/loading';
+import { LoadingComponent } from './pages/loading/loading';
 import { HomePage } from './pages/home/home';
 import { ExplorePage } from './pages/explore/explore';
-import { SavedPage } from './pages/saved';
-import { LocationPage } from './pages/location';
+import { SavedComponent } from './pages/saved/saved';
+import { LocationComponent } from './pages/location/location';
 
 export const routes: Routes = [
-  { path: '', component: LoadingPage },
+  { path: '', component: LoadingComponent },
   { path: 'home', component: HomePage },
   { path: 'explore', component: ExplorePage },
-  { path: 'saved', component: SavedPage },
-  { path: 'location/:id', component: LocationPage },
+  { path: 'saved', component: SavedComponent },
+  { path: 'location/:id', component: LocationComponent },
   { path: '**', redirectTo: '' }
 ];

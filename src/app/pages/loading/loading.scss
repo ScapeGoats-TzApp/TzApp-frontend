@@ -1,0 +1,145 @@
+/* Loading Component Styles */
+
+.bg-gradient-main {
+  background: linear-gradient(
+    180deg,
+    #ffffff 13.52%,
+    rgba(167, 235, 242, 0.4) 76.72%,
+    rgba(84, 172, 191, 0.68) 87.94%,
+    #26658c 100%
+  );
+}
+
+.bg-navy {
+  background-color: #011c40;
+}
+
+/* Loading screen container */
+.loading-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Goat mascot styles */
+.mascot-container {
+  width: 250px;
+  height: 250px;
+  margin-bottom: 2rem;
+  position: relative;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* Greeting text styles */
+.greeting-text {
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 2.25rem;
+  margin-bottom: 3rem;
+  text-shadow: 0 2px 7px #011c40;
+  letter-spacing: -2.52px;
+}
+
+/* Loading dots styles */
+.loading-dots {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 6rem;
+
+  .dot {
+    width: 0.5rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background-color: #011c40;
+    animation: pulse-height 1.4s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+/* Loading animation */
+@keyframes pulse-height {
+  0%, 100% {
+    height: 3rem;
+  }
+  50% {
+    height: 1.5rem;
+  }
+}
+
+/* Bottom branding styles */
+.branding-container {
+  position: absolute;
+  bottom: 2rem;
+  text-align: center;
+}
+
+.brand-title {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.brand-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .mascot-container {
+    width: 200px;
+    height: 200px;
+  }
+
+  .greeting-text {
+    font-size: 1.875rem;
+  }
+
+  .loading-dots {
+    margin-bottom: 4rem;
+  }
+
+  .branding-container {
+    bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .mascot-container {
+    width: 180px;
+    height: 180px;
+  }
+
+  .greeting-text {
+    font-size: 1.5rem;
+  }
+
+  .loading-dots {
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+
+    .dot {
+      width: 0.375rem;
+      height: 2.5rem;
+    }
+  }
+}
