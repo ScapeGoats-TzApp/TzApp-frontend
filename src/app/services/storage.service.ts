@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { WeatherResponse } from './weather.service';
+import { NormalizedWeatherData } from './onecall.service';
 
 export interface SavedLocation {
   id: string;
@@ -9,15 +10,27 @@ export interface SavedLocation {
   savedAt: Date;
 }
 
+export interface SavedHistoricalWeather {
+  id: string;
+  locationName: string;
+  date: string;
+  dateObj: Date;
+  weatherData: NormalizedWeatherData;
+  savedAt: Date;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class StorageService {
   private readonly SAVED_LOCATION_KEY = 'savedLocation';
+  private readonly SAVED_HISTORICAL_KEY = 'savedHistoricalWeather';
   private savedLocationSubject = new BehaviorSubject<SavedLocation | null>(null);
+  private savedHistoricalSubject = new BehaviorSubject<SavedHistoricalWeather[]>([]);
 
   constructor() {
     this.loadSavedLocation();
+    this.loadSavedHistoricalWeather();
   }
 
   private loadSavedLocation(): void {
@@ -99,5 +112,70 @@ export class StorageService {
     
     // Fallback to weather data city name
     return weatherData.weather.cityName || 'Unknown Location';
+  }
+
+  // Historical Weather Storage Methods
+  private loadSavedHistoricalWeather(): void {
+    try {
+      const saved = localStorage.getItem(this.SAVED_HISTORICAL_KEY);
+      if (saved) {
+        const historical: SavedHistoricalWeather[] = JSON.parse(saved);
+        // Convert dateObj and savedAt back to Date objects
+        historical.forEach(item => {
+          item.dateObj = new Date(item.dateObj);
+          item.savedAt = new Date(item.savedAt);
+        });
+        this.savedHistoricalSubject.next(historical);
+      }
+    } catch (error) {
+      console.warn('Failed to load saved historical weather:', error);
+      this.savedHistoricalSubject.next([]);
+    }
+  }
+
+  saveHistoricalWeather(weatherData: NormalizedWeatherData, locationName: string): void {
+    try {
+      const historical: SavedHistoricalWeather = {
+        id: `historical_${Date.now()}`,
+        locationName,
+        date: weatherData.date,
+        dateObj: weatherData.dateObj,
+        weatherData,
+        savedAt: new Date()
+      };
+
+      const currentHistorical = this.savedHistoricalSubject.value;
+      const updatedHistorical = [historical, ...currentHistorical];
+      
+      localStorage.setItem(this.SAVED_HISTORICAL_KEY, JSON.stringify(updatedHistorical));
+      this.savedHistoricalSubject.next(updatedHistorical);
+    } catch (error) {
+      console.error('Failed to save historical weather:', error);
+    }
+  }
+
+  getSavedHistoricalWeather(): Observable<SavedHistoricalWeather[]> {
+    return this.savedHistoricalSubject.asObservable();
+  }
+
+  removeHistoricalWeather(id: string): void {
+    try {
+      const currentHistorical = this.savedHistoricalSubject.value;
+      const updatedHistorical = currentHistorical.filter(item => item.id !== id);
+      
+      localStorage.setItem(this.SAVED_HISTORICAL_KEY, JSON.stringify(updatedHistorical));
+      this.savedHistoricalSubject.next(updatedHistorical);
+    } catch (error) {
+      console.error('Failed to remove historical weather:', error);
+    }
+  }
+
+  clearAllHistoricalWeather(): void {
+    try {
+      localStorage.removeItem(this.SAVED_HISTORICAL_KEY);
+      this.savedHistoricalSubject.next([]);
+    } catch (error) {
+      console.error('Failed to clear historical weather:', error);
+    }
   }
 }

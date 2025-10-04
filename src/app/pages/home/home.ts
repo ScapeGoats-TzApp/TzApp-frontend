@@ -6,7 +6,7 @@ import { SearchAutocompleteComponent } from '../../components/search-autocomplet
 import { CalendarPickerComponent } from '../../components/calendar-picker/calendar-picker.component';
 import { WeatherService, WeatherResponse, ForecastResponse, PlacePrediction } from '../../services/weather.service';
 import { GeolocationService, GeolocationCoordinates, GeolocationError } from '../../services/geolocation.service';
-import { StorageService, SavedLocation } from '../../services/storage.service';
+import { StorageService, SavedLocation, SavedHistoricalWeather } from '../../services/storage.service';
 import { OneCallService, NormalizedWeatherData } from '../../services/onecall.service';
 
 @Component({
@@ -33,6 +33,7 @@ export class HomePage implements OnInit {
   historicalWeatherData = signal<NormalizedWeatherData | null>(null);
   historicalSelectedDate = signal<Date>(new Date());
   historicalLocation = signal<{ lat: number; lon: number; name: string } | null>(null);
+  savedHistoricalWeather = signal<SavedHistoricalWeather[]>([]);
   
   // UI state
   loading = signal(false);
@@ -79,6 +80,11 @@ export class HomePage implements OnInit {
         // Load forecast for saved location
         this.loadSavedLocationForecast(savedLocation.weatherData.location.lat, savedLocation.weatherData.location.lng);
       }
+    });
+
+    // Load saved historical weather
+    this.storageService.getSavedHistoricalWeather().subscribe(historical => {
+      this.savedHistoricalWeather.set(historical);
     });
   }
 
@@ -546,5 +552,41 @@ export class HomePage implements OnInit {
     const url = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&zoom=12&level=surface&overlay=rain&menu=&message=&marker=true&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=${lat}&detailLon=${lng}&metricWind=default&metricTemp=default&radarRange=-1`;
     
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  // Historical weather save methods
+  saveHistoricalWeather(): void {
+    const weatherData = this.historicalWeatherData();
+    const location = this.historicalLocation();
+    
+    if (weatherData && location) {
+      this.storageService.saveHistoricalWeather(weatherData, location.name);
+    }
+  }
+
+  removeHistoricalWeather(id: string): void {
+    this.storageService.removeHistoricalWeather(id);
+  }
+
+  getHistoricalWeatherTemperature(weather: SavedHistoricalWeather): string {
+    if (weather.weatherData.temperature.current !== undefined) {
+      return `${weather.weatherData.temperature.current}°C`;
+    }
+    return `${weather.weatherData.temperature.max}°C`;
+  }
+
+  getHistoricalWeatherDescription(weather: SavedHistoricalWeather): string {
+    if (weather.weatherData.weather) {
+      return weather.weatherData.weather.description;
+    }
+    return weather.weatherData.type.toUpperCase();
+  }
+
+  formatHistoricalDate(date: Date): string {
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
   }
 }
