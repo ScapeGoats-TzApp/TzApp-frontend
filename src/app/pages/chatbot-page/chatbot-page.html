@@ -1,10 +1,52 @@
 <div class="min-h-screen pb-24 flex flex-col chatbot-container">
   <div class="max-w-[412px] w-full mx-auto px-[6px] pt-7 flex-1 flex flex-col">
     <!-- Chat Messages Area -->
-    <div class="flex-1 overflow-y-auto mb-2">
-      <!-- Assistant Message -->
-      <div class="flex items-start gap-3 mb-4">
-        <!-- Avatar -->
+    <div class="flex-1 overflow-y-auto mb-2" #messagesContainer>
+      <!-- Dynamic Messages -->
+      <div *ngFor="let message of messages; let i = index" class="mb-4">
+        <!-- Assistant Message -->
+        <div *ngIf="message.role === 'assistant'" class="flex items-start gap-3">
+          <!-- Avatar -->
+          <div class="flex-shrink-0">
+            <img 
+              src="https://api.builder.io/api/v1/image/assets/TEMP/3d85b47b961d90411b4c1a275be97159b551a8b5?width=208" 
+              alt="Assistant" 
+              class="w-[104px] h-[70px] object-contain"
+            />
+          </div>
+          
+          <!-- Message Bubble -->
+          <div class="flex-1 bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mt-4">
+            <p class="text-cyan font-bold text-xs uppercase leading-[10px] text-justify assistant-message-text" 
+               [innerHTML]="message.content | nl2br">
+            </p>
+          </div>
+        </div>
+
+        <!-- User Message -->
+        <div *ngIf="message.role === 'user'" class="flex items-start gap-3 justify-end">
+          <!-- Message Bubble -->
+          <div class="flex-1 bg-white/30 rounded-[20px] border-b border-cyan p-4 mt-4 max-w-[80%]">
+            <p class="text-navy-90 font-bold text-xs uppercase leading-[14px] text-justify user-message-text break-words">
+              {{ message.content }}
+            </p>
+          </div>
+          
+          <!-- User Avatar (Goat Photo) -->
+          <div class="flex-shrink-0">
+            <div class="w-[40px] h-[40px] rounded-full overflow-hidden">
+              <img 
+                [src]="userGoatImageUrl" 
+                alt="User Goat" 
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div *ngIf="isLoading" class="flex items-start gap-3 mb-4">
         <div class="flex-shrink-0">
           <img 
             src="https://api.builder.io/api/v1/image/assets/TEMP/3d85b47b961d90411b4c1a275be97159b551a8b5?width=208" 
@@ -12,18 +54,17 @@
             class="w-[104px] h-[70px] object-contain"
           />
         </div>
-        
-        <!-- Message Bubble -->
         <div class="flex-1 bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mt-4">
-          <p class="text-cyan font-bold text-xs uppercase leading-[10px] text-justify assistant-message-text">
-            Hello there! 🌟<br>
-            I'm your travel and future planning assistant, ready to help you design your next adventure or brainstorm exciting plans. Whether you're looking for vacation ideas, future goals, or just some fun suggestions, I'm here for it all!<br>
-            What's your next big idea? Let's get started!
-          </p>
+          <div class="flex items-center gap-2">
+            <div class="animate-pulse text-cyan font-bold text-xs">Tzappu is typing</div>
+            <div class="flex gap-1">
+              <div class="w-1 h-1 bg-cyan rounded-full animate-bounce"></div>
+              <div class="w-1 h-1 bg-cyan rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+              <div class="w-1 h-1 bg-cyan rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <!-- User messages would appear here dynamically -->
     </div>
 
     <!-- Input Area -->
@@ -31,12 +72,98 @@
       <div class="relative bg-white/20 rounded-[20px] border-b border-cyan p-4">
         <input 
           type="text" 
+          [(ngModel)]="currentMessage"
+          (keypress)="onKeyPress($event)"
           placeholder="write here..." 
           class="w-full bg-transparent text-navy-90 font-bold text-sm placeholder:text-goat-sky placeholder:lowercase focus:outline-none chat-input"
+          [disabled]="isLoading"
         />
+        <button 
+          (click)="sendMessage()"
+          [disabled]="!currentMessage.trim() || isLoading"
+          class="absolute right-4 top-1/2 transform -translate-y-1/2 text-cyan hover:text-cyan-dark disabled:text-gray-400 disabled:cursor-not-allowed"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Chat Management Buttons -->
+      <div class="flex justify-center gap-4 mt-2">
+        <button 
+          (click)="saveChat()"
+          [disabled]="!hasMessagesToSave()"
+          class="text-xs text-goat-sky hover:text-cyan transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
+        >
+          Save Chat
+        </button>
+        <button 
+          (click)="clearChat()"
+          class="text-xs text-goat-sky hover:text-cyan transition-colors"
+        >
+          Clear Chat
+        </button>
       </div>
     </div>
   </div>
 
   <app-navigation></app-navigation>
+</div>
+
+<!-- Save Chat Dialog -->
+<div *ngIf="showSaveDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-[20px] p-6 max-w-md w-full mx-4">
+    <h3 class="text-navy font-bold text-lg mb-4">Save Chat</h3>
+    <input 
+      type="text" 
+      [(ngModel)]="chatTitle"
+      placeholder="Enter chat title..."
+      class="w-full bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 mb-4 text-navy-90 font-bold text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan"
+    />
+    <div class="flex gap-3 justify-end">
+      <button 
+        (click)="cancelSaveChat()"
+        class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+      >
+        Cancel
+      </button>
+      <button 
+        (click)="confirmSaveChat()"
+        class="px-4 py-2 bg-cyan text-white rounded-[20px] hover:bg-cyan-dark transition-colors"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Saved Chats Sidebar -->
+<div class="fixed right-4 top-4 z-40">
+  <div class="bg-white/90 backdrop-blur-sm rounded-[20px] border border-cyan p-4 max-w-sm w-80 max-h-96 overflow-y-auto">
+    <h3 class="text-navy font-bold text-sm mb-3">Saved Chats</h3>
+    
+    <div *ngIf="savedChats.length === 0" class="text-gray-500 text-xs text-center py-4">
+      No saved chats yet
+    </div>
+    
+    <div *ngFor="let chat of savedChats" class="mb-3 last:mb-0">
+      <div 
+        (click)="loadChat(chat.id)"
+        class="bg-cyan-light/20 rounded-[15px] p-3 cursor-pointer hover:bg-cyan-light/30 transition-colors group"
+      >
+        <div class="flex justify-between items-start mb-1">
+          <h4 class="text-navy font-bold text-xs leading-tight flex-1 mr-2">{{ chat.title }}</h4>
+          <button 
+            (click)="deleteChat(chat.id, $event)"
+            class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+          >
+            ×
+          </button>
+        </div>
+        <p class="text-gray-600 text-xs">{{ formatDate(chat.created_at) }}</p>
+        <p class="text-gray-500 text-xs">{{ chat.message_count || 0 }} messages</p>
+      </div>
+    </div>
+  </div>
 </div>
