@@ -164,7 +164,7 @@
             <img 
               [src]="getWeatherIconUrl(weatherData()!.weather.icon)" 
               [alt]="weatherData()!.weather.description" 
-              class="w-[80px] h-[120px]"
+              class="w-20 h-20 object-contain"
             />
             <div>
               <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">{{ weatherData()!.weather.temperature }}°C</p>
@@ -318,14 +318,26 @@
     <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
       <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">UV INDEX</p>
       <div class="mb-6">
-        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">1</p>
-        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">low</p>
+        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ getUVIndex() }}</p>
+        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">{{ getUVDescription(getUVIndex()) }}</p>
       </div>
       
       <!-- UV Index gradient bar -->
       <div class="relative">
         <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv)"/>
+          
+          <!-- UV indicator -->
+          <circle 
+            [attr.cx]="9 + (getUVPosition(getUVIndex()) / 100) * 347" 
+            cy="9" 
+            r="3" 
+            fill="#FFFFFF"
+            stroke="#000000"
+            stroke-width="1"
+            class="drop-shadow-lg"
+          />
+          
           <defs>
             <linearGradient id="paint0_linear_uv" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
               <stop stop-color="#268C48"/>
@@ -354,7 +366,7 @@
         <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
           <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">CLOUDINESS</p>
           <div class="mb-2">
-            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ weatherData()!.weather.cloudiness }}%</p>
+            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ getCloudiness() }}%</p>
             <p class="text-navy-50 font-bold text-2xl" style="letter-spacing: -0.24px;">CLOUDS</p>
           </div>
         </div>
@@ -394,7 +406,7 @@
             <img 
               [src]="getWeatherIconUrl(savedWeatherData()!.weather.icon)" 
               [alt]="savedWeatherData()!.weather.description" 
-              class="w-[80px] h-[120px]"
+              class="w-20 h-20 object-contain"
             />
             <div>
               <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">{{ savedWeatherData()!.weather.temperature }}°C</p>
@@ -548,14 +560,26 @@
     <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
       <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">UV INDEX</p>
       <div class="mb-6">
-        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">1</p>
-        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">low</p>
+        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ getSavedUVIndex() }}</p>
+        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">{{ getUVDescription(getSavedUVIndex()) }}</p>
       </div>
       
       <!-- UV Index gradient bar -->
       <div class="relative">
         <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv_saved)"/>
+          
+          <!-- UV indicator -->
+          <circle 
+            [attr.cx]="9 + (getUVPosition(getSavedUVIndex()) / 100) * 347" 
+            cy="9" 
+            r="3" 
+            fill="#FFFFFF"
+            stroke="#000000"
+            stroke-width="1"
+            class="drop-shadow-lg"
+          />
+          
           <defs>
             <linearGradient id="paint0_linear_uv_saved" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
               <stop stop-color="#268C48"/>
@@ -584,7 +608,7 @@
         <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
           <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">CLOUDINESS</p>
           <div class="mb-2">
-            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ savedWeatherData()!.weather.cloudiness }}%</p>
+            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ getSavedCloudiness() }}%</p>
             <p class="text-navy-50 font-bold text-2xl" style="letter-spacing: -0.24px;">CLOUDS</p>
           </div>
         </div>
@@ -623,7 +647,7 @@
             <img 
               [src]="getWeatherIconUrl(searchWeatherData()!.weather.icon)" 
               [alt]="searchWeatherData()!.weather.description" 
-              class="w-[80px] h-[120px]"
+              class="w-20 h-20 object-contain"
             />
             <div>
               <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">{{ searchWeatherData()!.weather.temperature }}°C</p>
@@ -777,14 +801,26 @@
     <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
       <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">UV INDEX</p>
       <div class="mb-6">
-        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">1</p>
-        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">low</p>
+        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ getSearchUVIndex() }}</p>
+        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">{{ getUVDescription(getSearchUVIndex()) }}</p>
       </div>
       
       <!-- UV Index gradient bar -->
       <div class="relative">
         <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv_search)"/>
+          
+          <!-- UV indicator -->
+          <circle 
+            [attr.cx]="9 + (getUVPosition(getSearchUVIndex()) / 100) * 347" 
+            cy="9" 
+            r="3" 
+            fill="#FFFFFF"
+            stroke="#000000"
+            stroke-width="1"
+            class="drop-shadow-lg"
+          />
+          
           <defs>
             <linearGradient id="paint0_linear_uv_search" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
               <stop stop-color="#268C48"/>
@@ -813,7 +849,7 @@
         <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
           <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">CLOUDINESS</p>
           <div class="mb-2">
-            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ searchWeatherData()!.weather.cloudiness }}%</p>
+            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ getSearchCloudiness() }}%</p>
             <p class="text-navy-50 font-bold text-2xl" style="letter-spacing: -0.24px;">CLOUDS</p>
           </div>
         </div>

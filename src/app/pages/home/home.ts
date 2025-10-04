@@ -690,4 +690,59 @@ export class HomePage implements OnInit {
     
     return { x, y, progress };
   }
+
+  // Get UV index value
+  getUVIndex(): number {
+    const weatherData = this.weatherData();
+    return weatherData?.weather.uvi || 1; // Default to 1 if no UV data
+  }
+
+  // Get UV index for saved location
+  getSavedUVIndex(): number {
+    const savedWeatherData = this.savedWeatherData();
+    return savedWeatherData?.weather.uvi || 1;
+  }
+
+  // Get UV index for search location
+  getSearchUVIndex(): number {
+    const searchWeatherData = this.searchWeatherData();
+    return searchWeatherData?.weather.uvi || 1;
+  }
+
+  // Get UV index description
+  getUVDescription(uvIndex: number): string {
+    if (uvIndex <= 2) return 'low';
+    if (uvIndex <= 5) return 'moderate';
+    if (uvIndex <= 7) return 'high';
+    if (uvIndex <= 10) return 'very high';
+    return 'extreme';
+  }
+
+  // Calculate UV indicator position (0-100%)
+  getUVPosition(uvIndex: number): number {
+    // UV index typically ranges from 0-11+, but we'll cap at 11 for display
+    const maxUV = 11;
+    const clampedUV = Math.min(uvIndex, maxUV);
+    return (clampedUV / maxUV) * 100;
+  }
+
+  // Get cloudiness percentage with fallback
+  getCloudiness(): number {
+    const weatherData = this.weatherData();
+    console.log('Weather data:', weatherData);
+    console.log('Cloudiness value:', weatherData?.weather.cloudiness);
+    return weatherData?.weather.cloudiness || 0;
+  }
+
+  // Get cloudiness for saved location
+  getSavedCloudiness(): number {
+    const savedWeatherData = this.savedWeatherData();
+    return savedWeatherData?.weather.cloudiness || 0;
+  }
+
+  // Get cloudiness for search location
+  getSearchCloudiness(): number {
+    const searchWeatherData = this.searchWeatherData();
+    return searchWeatherData?.weather.cloudiness || 0;
+  }
 }

@@ -29,6 +29,7 @@ export interface WeatherData {
   cloudiness: number;
   windDirection: number;
   windGust?: number;
+  uvi?: number;
   
   // Atmospheric data
   seaLevelPressure?: number;
@@ -274,7 +275,11 @@ export class WeatherService {
         tempMin: Math.round(response.main.temp_min),
         tempMax: Math.round(response.main.temp_max),
         visibility: response.visibility ? Math.round(response.visibility / 1000) : 0, // Convert to km
-        cloudiness: response.clouds.all,
+        cloudiness: (() => {
+          // console.log('API Response clouds:', response.clouds);
+          // console.log('Clouds all value:', response.clouds?.all);
+          return response.clouds?.all || 0;
+        })(),
         windDirection: response.wind.deg,
         windGust: response.wind.gust,
         
