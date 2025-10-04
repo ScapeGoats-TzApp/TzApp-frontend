@@ -8,16 +8,17 @@
       <img 
         src="https://api.builder.io/api/v1/image/assets/TEMP/f24033bd8a7b946286620b1ab7ad38b51ff734cd?width=162" 
         alt="Character" 
-        class="absolute -top-4 right-0 w-[100px] h-[150px] object-contain"
+        class="fixed w-[100px] h-[150px] object-contain z-10"
+        style="top: 0; right: -15px; margin: 0; padding: 0; border: none; outline: none;"
       />
     </div>
 
     <!-- Border line -->
     <div class="w-full h-px border-t-2 border-cyan mb-8"></div>
 
-    <!-- Event Type Chips (Horizontal Scroll) -->
-    <div class="overflow-x-auto hide-scrollbar mb-6">
-      <div class="flex gap-2.5 min-w-max">
+    <!-- Event Type Chips (Grid Layout) -->
+    <div class="mb-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
         @for (event of filteredEvents; track event.id) {
           <button 
             (click)="selectEvent(event.id)"
