@@ -125,3 +125,70 @@ button:disabled {
 .max-h-96::-webkit-scrollbar-thumb:hover {
   background: rgba(84, 172, 191, 0.7);
 }
+
+// Assistant message with overlapping goat styling
+.assistant-message-container {
+  position: relative;
+  
+  .goat-overlay {
+    position: absolute;
+    z-index: 10;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+  
+  .message-content {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// Enhanced goat positioning for better overlap effect
+.goat-overlay {
+  transition: transform 0.2s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Mobile responsive improvements
+@media (max-width: 640px) {
+  .chatbot-container {
+    padding-bottom: 5rem; // Reduce bottom padding on mobile
+  }
+  
+  // Smaller message bubbles on mobile
+  .bg-white\/30, .bg-cyan-light\/20 {
+    padding: 0.75rem;
+  }
+  
+  // Better touch targets for mobile
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  // Improve text readability on mobile
+  .assistant-message-text, .user-message-text {
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+  
+  // Chat history modal improvements for mobile
+  .fixed.inset-0 {
+    padding: 1rem;
+  }
+  
+  // Better spacing for mobile input
+  .chat-input {
+    font-size: 0.875rem;
+    padding: 0.75rem;
+  }
+}
+
+// Tablet and larger screens
+@media (min-width: 641px) {
+  .chatbot-container {
+    padding-bottom: 6rem;
+  }
+}

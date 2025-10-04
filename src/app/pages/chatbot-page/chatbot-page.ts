@@ -27,6 +27,7 @@ export class ChatbotPage implements OnInit, AfterViewChecked {
   currentChat: SavedChat | null = null;
   savedChats: SavedChat[] = [];
   showSaveDialog: boolean = false;
+  showChatHistory: boolean = false;
   chatTitle: string = '';
   private apiUrl = 'http://localhost:5000/api';
 
@@ -202,6 +203,7 @@ export class ChatbotPage implements OnInit, AfterViewChecked {
         this.currentChat = chat;
         this.sessionId = chat.session_id;
         this.messages = chat.messages.filter(msg => msg.role !== 'system');
+        this.showChatHistory = false; // Close the modal
         alert(`Chat loaded: ${chat.title}`);
       },
       error: (error) => {
@@ -243,5 +245,10 @@ export class ChatbotPage implements OnInit, AfterViewChecked {
   // Check if there are messages to save
   hasMessagesToSave(): boolean {
     return this.messages.length > 1; // More than just the initial message
+  }
+
+  // Toggle chat history modal
+  toggleChatHistory() {
+    this.showChatHistory = !this.showChatHistory;
   }
 }
