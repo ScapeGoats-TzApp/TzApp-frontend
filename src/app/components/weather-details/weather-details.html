@@ -1,0 +1,224 @@
+<div class="max-w-[412px] mx-auto px-[6px] pb-6">
+  <!-- Search Bar -->
+  <div class="pt-4 mb-4">
+    <app-search-autocomplete
+      [placeholder]="searchPlaceholder"
+      [disabled]="searchDisabled()"
+      (placeSelected)="onPlaceSelected($event)"
+    ></app-search-autocomplete>
+  </div>
+
+  <!-- Calendar Picker -->
+  <div class="mb-4">
+    <app-calendar-picker
+      [selectedDate]="selectedDate()"
+      [disabled]="false"
+      (dateSelected)="onDateSelected($event)"
+    ></app-calendar-picker>
+  </div>
+
+  <!-- Header with location name and save button -->
+  <div class="relative flex items-center justify-center pt-4 mb-6">
+    <h1 class="text-navy font-bold text-4xl uppercase text-center" style="letter-spacing: -2.52px;">{{ locationName }}</h1>
+    <button class="absolute right-0 flex items-center gap-2 bg-cyan-light/20 rounded-[20px] border-b border-cyan px-3 py-1.5">
+      <span class="text-navy-90 font-bold text-sm capitalize" style="letter-spacing: -1.05px;">Save</span>
+      <img 
+        src="https://api.builder.io/api/v1/image/assets/TEMP/e8e0d56b066f76b896b2e7ac588ff5f4dda6f650?width=60" 
+        alt="Pin" 
+        class="w-[30px] h-[30px]"
+      />
+    </button>
+  </div>
+
+  <!-- Main Weather Card -->
+  <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
+    <div class="flex items-start justify-between">
+      <div class="flex items-start gap-3">
+        <img 
+          src="https://api.builder.io/api/v1/image/assets/TEMP/bdf6f8e90469a9e3388a9ed3b16dc186e764dc15?width=160" 
+          alt="Weather icon" 
+          class="w-[80px] h-[120px] -mt-1.5"
+        />
+        <div class="pt-2">
+          <p class="text-navy-90 font-bold text-4xl leading-tight" style="letter-spacing: -2.52px;">{{ currentTemp }}°C</p>
+          <p class="text-navy-90 font-bold text-sm capitalize mt-0.5" style="letter-spacing: -1.05px;">{{ condition }}</p>
+          <p class="text-navy-90 font-bold text-2xl mt-1" style="letter-spacing: -1.68px;">H:{{ highTemp }}°</p>
+          <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">L:{{ lowTemp }}°</p>
+        </div>
+      </div>
+      <img 
+        src="https://api.builder.io/api/v1/image/assets/TEMP/69135c87e725cbe79abd4f7d8a33ec4cdd5b4437?width=284" 
+        alt="Character" 
+        class="w-[142px] h-auto absolute right-4 top-8"
+      />
+    </div>
+  </div>
+
+  <!-- Date Forecast Header -->
+  <div class="mb-1">
+    <p class="text-navy-50 font-bold text-xs uppercase ml-6" style="letter-spacing: -0.11px;">{{ forecastDate }}</p>
+  </div>
+
+  <!-- Hourly Forecast Scroll -->
+  <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan mb-4 overflow-hidden">
+    <div class="overflow-x-auto hide-scrollbar">
+      <div class="flex gap-0 min-w-max py-2 px-3">
+        <div *ngFor="let hour of hourlyForecast" class="flex flex-col items-center justify-center w-[30px] flex-shrink-0">
+          <p class="text-navy-50 font-bold text-xs" style="letter-spacing: -0.11px;">{{ hour.time }}</p>
+          <img 
+            [src]="hour.icon" 
+            alt="Weather" 
+            class="w-[30px] h-[30px] my-1"
+          />
+          <p class="text-navy-50 font-bold text-xs" style="letter-spacing: -0.11px;">{{ hour.temp }}°</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Precipitation Map -->
+  <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+    <p class="text-navy-50 font-bold text-xs uppercase mb-3" style="letter-spacing: -0.11px;">PRECIPITATION</p>
+    <div class="relative rounded-[20px] overflow-hidden">
+      <img 
+        src="https://api.builder.io/api/v1/image/assets/TEMP/ad33659c33381eac40061641b81f19d65a13ad9f?width=780" 
+        alt="Precipitation overlay" 
+        class="w-full h-auto"
+      />
+      <img 
+        src="https://api.builder.io/api/v1/image/assets/TEMP/146f8003b28ff3d65697a720e68e5d83dfe625c3?width=815" 
+        alt="Map" 
+        class="absolute inset-0 w-full h-full object-cover -z-10"
+      />
+    </div>
+  </div>
+
+  <!-- Feels Like & Elevation Row -->
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <!-- Feels Like -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">FEELS LIKE</p>
+      <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ feelsLike }}°</p>
+      <p class="text-navy-50 font-bold text-sm lowercase mb-2" style="letter-spacing: -0.15px;">actual: {{ actualTemp }}°</p>
+      
+      <div class="flex items-center gap-2 mb-2">
+        <p class="text-navy-50 font-bold text-sm lowercase" style="letter-spacing: -0.15px;">{{ tempDiff }}°</p>
+        <svg class="w-3.5 rotate-90" viewBox="0 0 12 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 1C7 0.447715 6.55228 0 6 0C5.44772 0 5 0.447715 5 1H6L7 1ZM6 20.7735L11.7735 15L6 9.2265L0.226497 15L6 20.7735ZM6 1H5L5 15H6H7L7 1L6 1Z" fill="#46738B"/>
+        </svg>
+      </div>
+      
+      <div class="h-px mb-2" style="background: linear-gradient(90deg, #011C40 0%, rgba(167, 235, 242, 0.40) 100%);"></div>
+      
+      <p class="text-navy-50 font-bold text-sm lowercase leading-tight" style="letter-spacing: -0.15px;">
+        It feels colder than the actual temperature
+      </p>
+    </div>
+
+    <!-- Elevation -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">ELEVATION</p>
+      <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ elevation }}</p>
+      <p class="text-navy-50 font-bold text-sm lowercase mb-3" style="letter-spacing: -0.15px;">meter</p>
+      <p class="text-navy-50 font-bold text-sm lowercase leading-tight mb-2" style="letter-spacing: -0.15px;">above sea level</p>
+      <p class="text-navy-50 font-bold text-sm uppercase leading-tight" style="letter-spacing: -0.15px;">
+        {{ coordinates.lat }}<br>{{ coordinates.lng }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Sunrise and Sunset -->
+  <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+    <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">SUNRISE AND SUNSET</p>
+    <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ sunrise }}</p>
+    
+    <div class="relative">
+      <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_sunset)"/>
+        <defs>
+          <linearGradient id="paint0_linear_sunset" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#26658C"/>
+            <stop offset="0.0865385" stop-color="#C09A00"/>
+            <stop offset="0.370192" stop-color="#FFEA00"/>
+            <stop offset="0.495192" stop-color="#FFF49A"/>
+            <stop offset="0.586538" stop-color="#FFE000"/>
+            <stop offset="0.913462" stop-color="#C09A00"/>
+            <stop offset="1" stop-color="#011C40" stop-opacity="0.88"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      
+      <svg class="absolute -top-2 right-[80px]" style="transform: rotate(-90deg)" width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 0.226498L0.226497 6L6 11.7735L11.7735 6L6 0.226498ZM6 17L7 17L7 6L6 6L5 6L5 17L6 17Z" fill="#CFB005"/>
+      </svg>
+    </div>
+    
+    <p class="text-navy-50 font-bold text-sm capitalize text-right mt-1" style="letter-spacing: -0.15px;">Sunset: {{ sunset }}</p>
+  </div>
+
+  <!-- UV Index -->
+  <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+    <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">UV INDEX</p>
+    <div class="mb-6">
+      <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ uvIndex.value }}</p>
+      <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">{{ uvIndex.level }}</p>
+    </div>
+    
+    <div class="relative">
+      <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv)"/>
+        <defs>
+          <linearGradient id="paint0_linear_uv" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#268C48"/>
+            <stop offset="0.0865385" stop-color="#C09A00"/>
+            <stop offset="0.289568" stop-color="#CF5701"/>
+            <stop offset="0.495192" stop-color="#D33335"/>
+            <stop offset="0.732416" stop-color="#D8000B"/>
+            <stop offset="0.913462" stop-color="#C00087"/>
+            <stop offset="1" stop-color="#290140" stop-opacity="0.88"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Visibility & Precipitation Row -->
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <!-- Visibility -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">VISIBILITY</p>
+      <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ visibility }} km</p>
+      <p class="text-navy-50 font-bold text-sm lowercase leading-tight" style="letter-spacing: -0.15px;">
+        {{ visibilityDesc }}
+      </p>
+    </div>
+
+    <!-- Precipitation Chances -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">PRECIPITATION</p>
+      <div>
+        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ precipChance }}%</p>
+        <p class="text-navy-50 font-bold text-2xl" style="letter-spacing: -0.24px;">CHANCES</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pressure & Humidity Row -->
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <!-- Pressure -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">PRESSURE</p>
+      <p class="text-navy-50 font-bold text-4xl mb-12" style="letter-spacing: -0.36px;">{{ pressure }}</p>
+      <p class="text-navy-50 font-bold text-sm lowercase text-right" style="letter-spacing: -0.15px;">mbar</p>
+    </div>
+
+    <!-- Humidity -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">HUMIDITY</p>
+      <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ humidity }}%</p>
+      <p class="text-navy-50 font-bold text-sm lowercase leading-tight" style="letter-spacing: -0.15px;">
+        the dew point is {{ dewPoint }}° right now
+      </p>
+    </div>
+  </div>
+</div>

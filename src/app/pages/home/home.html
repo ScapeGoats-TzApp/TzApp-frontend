@@ -40,13 +40,14 @@
 
     <!-- Page 2: Search -->
     @if (currentPage() === 2) {
-    <!-- Search Bar -->
+    <!-- Search and Calendar Picker -->
     <div class="pt-4 mb-4">
-      <app-search-autocomplete
-        placeholder="Search for a city"
+      <app-calendar-picker
+        [selectedDate]="selectedDate()"
         [disabled]="loading()"
+        (dateSelected)="onDateSelected($event)"
         (placeSelected)="onPlaceSelected($event)"
-      ></app-search-autocomplete>
+      ></app-calendar-picker>
     </div>
       
       <!-- Save Search Location Button (only show if search has results and no location is saved) -->

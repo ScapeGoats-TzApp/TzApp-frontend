@@ -16,35 +16,14 @@
       </h1>
     </div>
 
-    <!-- Search Bar -->
-    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 mb-6 relative">
-      <div class="flex items-center gap-2">
-        <input 
-          type="text" 
-          placeholder="search" 
-          class="flex-1 bg-white/20 rounded-[20px] border-b border-cyan px-4 py-2 text-navy-90 font-bold text-sm placeholder:text-gray-300 placeholder:lowercase focus:outline-none focus:ring-2 focus:ring-cyan"
-          style="letter-spacing: -1.05px;"
-        />
-        <button class="w-9 h-9 rounded-[20px] border-r border-cyan bg-white/20 flex items-center justify-center">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="11" cy="11" r="6" stroke="#26658C"/>
-            <path d="M11 8C10.606 8 10.2159 8.0776 9.85195 8.22836C9.48797 8.37913 9.15726 8.6001 8.87868 8.87868C8.6001 9.15726 8.37913 9.48797 8.22836 9.85195C8.0776 10.2159 8 10.606 8 11" stroke="#26658C" stroke-linecap="round"/>
-            <path d="M20 20L17 17" stroke="#26658C" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button class="w-12 h-12 flex items-center justify-center">
-          <svg class="w-12 h-12" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="6" y="13" width="38" height="8" rx="2" fill="rgba(126, 134, 158, 0.25)"/>
-            <rect x="6" y="13" width="38" height="31" rx="2" stroke="rgba(38, 101, 140, 0.34)" stroke-width="1.2"/>
-            <path d="M15 6L15 13" stroke="rgba(38, 101, 140, 0.34)" stroke-width="1.2" stroke-linecap="round"/>
-            <path d="M35 6L35 13" stroke="rgba(38, 101, 140, 0.34)" stroke-width="1.2" stroke-linecap="round"/>
-            <rect x="15" y="25" width="8" height="4" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
-            <rect x="15" y="33" width="8" height="4" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
-            <rect x="27" y="25" width="8" height="4" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
-            <rect x="27" y="33" width="8" height="4" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
-          </svg>
-        </button>
-      </div>
+    <!-- Search Bar with Calendar -->
+    <div class="mb-6">
+      <app-calendar-picker
+        [selectedDate]="selectedDate()"
+        [disabled]="false"
+        (dateSelected)="onDateSelected($event)"
+        (placeSelected)="onPlaceSelected($event)"
+      ></app-calendar-picker>
     </div>
 
     <!-- Page indicator -->

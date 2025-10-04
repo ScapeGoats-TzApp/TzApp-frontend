@@ -2,7 +2,7 @@ import { Component, signal, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NavigationComponent } from '../../components/navigation';
-import { SearchAutocompleteComponent } from '../../components/search-autocomplete/search-autocomplete.component';
+import { CalendarPickerComponent } from '../../components/calendar-picker/calendar-picker.component';
 import { WeatherService, WeatherResponse, ForecastResponse, PlacePrediction } from '../../services/weather.service';
 import { GeolocationService, GeolocationCoordinates, GeolocationError } from '../../services/geolocation.service';
 import { StorageService, SavedLocation } from '../../services/storage.service';
@@ -10,7 +10,7 @@ import { StorageService, SavedLocation } from '../../services/storage.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NavigationComponent, SearchAutocompleteComponent],
+  imports: [CommonModule, NavigationComponent, CalendarPickerComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -37,6 +37,9 @@ export class HomePage implements OnInit {
   // Saved location
   savedLocation = signal<SavedLocation | null>(null);
   hasSavedLocation = signal(false);
+  
+  // Calendar picker for search page
+  selectedDate = signal(new Date());
   
   // Touch/swipe handling
   touchStartX = 0;
@@ -249,6 +252,13 @@ export class HomePage implements OnInit {
         console.warn('Failed to fetch forecast data:', err.message);
       }
     });
+  }
+
+  onDateSelected(date: Date): void {
+    this.selectedDate.set(date);
+    console.log('Selected date:', date);
+    // Here you can implement logic to fetch weather data for the selected date
+    // For example, you could call a historical weather API or adjust the forecast data
   }
 
   getWeatherIconUrl(icon: string): string {
