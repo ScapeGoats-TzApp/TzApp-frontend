@@ -1,0 +1,84 @@
+<div class="min-h-screen pb-24" style="background: linear-gradient(180deg, #FFF 13.52%, rgba(167, 235, 242, 0.40) 76.72%, rgba(84, 172, 191, 0.68) 87.94%, #26658C 100%);">
+  <div class="max-w-[412px] mx-auto px-[6px] pt-8">
+    
+    <!-- Profile Avatar -->
+    <div class="flex justify-center mb-8">
+      <div class="relative w-[185px] h-[185px]">
+        <img 
+          src="https://api.builder.io/api/v1/image/assets/TEMP/70d690321e018ce2d4950ed60a712bea69803968?width=381" 
+          alt="Profile" 
+          class="w-[190px] h-[285px] object-contain absolute -top-7 left-0"
+        />
+      </div>
+    </div>
+
+    <!-- Profile Name -->
+    <div class="flex items-center justify-center gap-2 mb-6">
+      <h1 class="text-white font-bold text-4xl capitalize text-center" style="text-shadow: 0 2px 7px #011C40; letter-spacing: 0px;">
+        AmpuLaMare
+      </h1>
+      <button class="w-8 h-8 flex items-center justify-center">
+        <img 
+          src="https://api.builder.io/api/v1/image/assets/TEMP/64f0c9b624f366871a36a5b9bae1ede42bf8d9f4?width=66" 
+          alt="Edit" 
+          class="w-8 h-8"
+        />
+      </button>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="flex items-center justify-center gap-8 mb-4">
+      <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">THEME</span>
+      <button class="relative w-[77px] h-7 rounded-full border-2 border-navy bg-transparent">
+        <div class="absolute left-1 top-0.5 w-6 h-6 rounded-full border-3 border-cyan bg-white"></div>
+      </button>
+    </div>
+
+    <!-- Terms and Conditions -->
+    <button class="w-full bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 mb-4 flex items-center justify-between hover:bg-cyan-light/30 transition-colors">
+      <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">TERMS AND CONDITIONS</span>
+      <svg class="w-3 h-4" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289L6.34315 0.928932C5.95262 0.538408 5.31946 0.538408 4.92893 0.928932C4.53841 1.31946 4.53841 1.95262 4.92893 2.34315L10.5858 8L4.92893 13.6569C4.53841 14.0474 4.53841 14.6805 4.92893 15.0711C5.31946 15.4616 5.95262 15.4616 6.34315 15.0711L12.7071 8.70711ZM0 8V9H12V8V7H0V8Z" fill="#163252"/>
+      </svg>
+    </button>
+
+    <!-- Review Section -->
+    <div class="relative">
+      <div class="bg-white/20 rounded-[20px] border-b border-cyan p-4 mb-4" style="background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(97, 136, 140, 0.20) 100%);">
+        <!-- Title -->
+        <h2 class="text-navy-90 font-bold text-2xl uppercase text-center mb-2" style="letter-spacing: -0.24px;">
+          LEAVE US A REVIEW...
+        </h2>
+        
+        <!-- Subtitle -->
+        <p class="text-navy-50 font-bold text-xs uppercase text-center mb-4" style="letter-spacing: -0.11px; line-height: 10px;">
+          WE'D LOVE TO HEAR FROM YOU!
+        </p>
+
+        <!-- Text Area -->
+        <textarea 
+          placeholder="type here......" 
+          class="w-full h-[200px] bg-transparent text-navy-50 font-bold text-xs placeholder:text-navy-50 placeholder:uppercase focus:outline-none resize-none"
+          style="letter-spacing: -0.11px; line-height: 10px;"
+        ></textarea>
+      </div>
+
+      <!-- Send Button -->
+      <div class="flex justify-center">
+        <button class="bg-white/20 rounded-[20px] border-b border-cyan px-6 py-2 flex items-center gap-2 hover:bg-white/30 transition-colors">
+          <img 
+            src="https://api.builder.io/api/v1/image/assets/TEMP/bc97444f011c4f2b7f56e02bc04bdbf5c2588b27?width=48" 
+            alt="Send" 
+            class="w-6 h-6"
+          />
+          <span class="text-navy-50 font-bold text-base uppercase" style="letter-spacing: -0.16px; line-height: 10px;">
+            SEND
+          </span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <app-navigation></app-navigation>
+</div>

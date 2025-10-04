@@ -116,6 +116,9 @@ export class SmartPlanner implements OnInit {
   // Calendar state
   currentMonth = signal(new Date());
   calendarDays = signal<Date[]>([]);
+  showCalendarPopup = signal(false);
+  selectedDate = signal<Date | null>(null);
+  currentYear = signal(new Date().getFullYear());
 
   constructor(
     private weatherService: WeatherService,
@@ -373,5 +376,89 @@ export class SmartPlanner implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  // Calendar popup methods
+  toggleCalendar(): void {
+    this.showCalendarPopup.set(!this.showCalendarPopup());
+  }
+
+  // Year navigation
+  previousYear(): void {
+    const currentYear = new Date().getFullYear();
+    if (this.currentYear() > currentYear) {
+      this.currentYear.set(this.currentYear() - 1);
+    }
+  }
+
+  nextYear(): void {
+    const currentDate = new Date();
+    const maxFutureDate = new Date();
+    maxFutureDate.setMonth(maxFutureDate.getMonth() + 18);
+    const maxFutureYear = maxFutureDate.getFullYear();
+    
+    if (this.currentYear() < maxFutureYear) {
+      this.currentYear.set(this.currentYear() + 1);
+    }
+  }
+
+  // Navigation helper methods
+  canGoToPreviousYear(): boolean {
+    const currentYear = new Date().getFullYear();
+    return this.currentYear() > currentYear;
+  }
+
+  canGoToNextYear(): boolean {
+    const currentDate = new Date();
+    const maxFutureDate = new Date();
+    maxFutureDate.setMonth(maxFutureDate.getMonth() + 18);
+    const maxFutureYear = maxFutureDate.getFullYear();
+    
+    return this.currentYear() < maxFutureYear;
+  }
+
+  // Month selection
+  selectMonth(month: number, year: number): void {
+    this.selectedMonth.set(month);
+    this.selectedYear.set(year);
+    this.monthInput.set(`${String(month).padStart(2, '0')}/${year}`);
+    this.currentMonth.set(new Date(year, month - 1, 1));
+    this.updateCalendar();
+    this.showCalendarPopup.set(false);
+  }
+
+  // Get months for current year with disabled state
+  getMonthsForYear(): Array<{name: string, value: number, year: number, selected: boolean, disabled: boolean}> {
+    const year = this.currentYear();
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // 1-based month
+    
+    // Calculate the maximum future month (1.5 years = 18 months)
+    const maxFutureDate = new Date();
+    maxFutureDate.setMonth(maxFutureDate.getMonth() + 18);
+    const maxFutureYear = maxFutureDate.getFullYear();
+    const maxFutureMonth = maxFutureDate.getMonth() + 1;
+    
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    return months.map((name, index) => {
+      const monthValue = index + 1;
+      const isCurrentYear = year === currentYear;
+      const isPastMonth = isCurrentYear && monthValue < currentMonth;
+      const isTooFarFuture = year > maxFutureYear || (year === maxFutureYear && monthValue > maxFutureMonth);
+      const isSelected = monthValue === this.selectedMonth() && year === this.selectedYear();
+      
+      return {
+        name,
+        value: monthValue,
+        year,
+        selected: isSelected,
+        disabled: isPastMonth || isTooFarFuture
+      };
+    });
   }
 }

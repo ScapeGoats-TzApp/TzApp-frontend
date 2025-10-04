@@ -16,7 +16,7 @@
     <div class="w-full h-px border-t border-cyan mb-4"></div>
 
     <!-- Search Event -->
-    <div class="relative mb-4">
+    <!-- <div class="relative mb-4">
       <div class="inline-flex items-center bg-white/20 rounded-[20px] border-b border-cyan px-4 py-1.5 gap-2">
         <input 
           type="text" 
@@ -31,7 +31,7 @@
           <path d="M19.672 17.3684L16.7212 14.7632" stroke="#26658C" stroke-linecap="round"/>
         </svg>
       </div>
-    </div>
+    </div> -->
 
     <!-- Event Type Chips (Horizontal Scroll) -->
     <div class="mb-4 overflow-x-auto hide-scrollbar -mx-[6px] px-[6px]">
@@ -67,7 +67,10 @@
           class="bg-white/20 rounded-[20px] border-b border-cyan px-4 py-1.5 text-gray-300 font-bold text-sm placeholder:text-gray-300 placeholder:lowercase focus:outline-none w-[143px]"
           style="letter-spacing: -1.05px;"
         />
-        <button class="w-8 h-8 bg-white/20 rounded-[20px] border-r border-cyan flex items-center justify-center">
+        <button 
+          (click)="toggleCalendar()"
+          class="w-8 h-8 bg-white/20 rounded-[20px] border-r border-cyan flex items-center justify-center hover:bg-white/30 transition-colors"
+        >
           <svg class="w-7 h-7" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="3" y="7" width="20" height="5" rx="2" fill="rgba(126, 134, 158, 0.25)"/>
             <rect x="3" y="7" width="20" height="17" rx="2" stroke="rgba(38, 101, 140, 0.34)" stroke-width="1.2"/>
@@ -80,7 +83,57 @@
           </svg>
         </button>
       </div>
+
+      <!-- Month Picker Popup -->
+      @if (showCalendarPopup()) {
+        <div class="absolute top-full left-0 right-0 z-50 mt-2 bg-white/90 backdrop-blur-sm rounded-[20px] border border-cyan p-4 shadow-lg">
+          <!-- Header -->
+          <div class="flex items-center justify-between mb-4">
+            <button 
+              (click)="previousYear()"
+              [disabled]="!canGoToPreviousYear()"
+              class="p-2 hover:bg-white/30 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <svg class="w-5 h-5 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <h3 class="text-navy font-bold text-lg">{{ currentYear() }}</h3>
+            <button 
+              (click)="nextYear()"
+              [disabled]="!canGoToNextYear()"
+              class="p-2 hover:bg-white/30 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <svg class="w-5 h-5 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Months Grid -->
+          <div class="grid grid-cols-3 gap-2">
+            @for (month of getMonthsForYear(); track month.value) {
+              <button
+                (click)="selectMonth(month.value, month.year)"
+                [disabled]="month.disabled"
+                class="p-3 rounded-lg text-sm font-semibold transition-all hover:bg-white/50 disabled:opacity-30 disabled:cursor-not-allowed"
+                [class.bg-cyan]="month.selected"
+                [class.text-white]="month.selected"
+                [class.text-navy]="!month.selected"
+                [class.bg-white/30]="!month.selected && !month.disabled"
+              >
+                {{ month.name }}
+              </button>
+            }
+          </div>
+        </div>
+      }
     </div>
+
+    <!-- Calendar Backdrop -->
+    @if (showCalendarPopup()) {
+      <div class="fixed inset-0 z-40" (click)="showCalendarPopup.set(false)"></div>
+    }
 
     <!-- When and Where Heading -->
     <div class="text-center mb-4">

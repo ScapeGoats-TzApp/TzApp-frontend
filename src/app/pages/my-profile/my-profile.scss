@@ -1,0 +1,203 @@
+// Profile page styles
+.profile-container {
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  background: linear-gradient(180deg, #FFF 13.52%, rgba(167, 235, 242, 0.40) 76.72%, rgba(84, 172, 191, 0.68) 87.94%, #26658C 100%);
+}
+
+.profile-content {
+  max-width: 412px;
+  margin: 0 auto;
+  padding: 0 6px;
+  padding-top: 2rem;
+}
+
+.profile-avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.avatar-container {
+  position: relative;
+  width: 185px;
+  height: 185px;
+}
+
+.avatar-image {
+  width: 190px;
+  height: 285px;
+  object-fit: contain;
+  position: absolute;
+  top: -1.75rem;
+  left: 0;
+}
+
+.profile-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-title {
+  color: white;
+  font-weight: bold;
+  font-size: 2.25rem;
+  text-transform: capitalize;
+  text-align: center;
+  text-shadow: 0 2px 7px #011C40;
+  letter-spacing: 0px;
+}
+
+.edit-button {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.theme-label {
+  color: #163252;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: -0.24px;
+}
+
+.theme-toggle {
+  position: relative;
+  width: 77px;
+  height: 1.75rem;
+  border-radius: 9999px;
+  border: 2px solid #163252;
+  background: transparent;
+}
+
+.toggle-slider {
+  position: absolute;
+  left: 0.25rem;
+  top: 0.125rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  border: 3px solid #00B4D8;
+  background: white;
+}
+
+.terms-button {
+  width: 100%;
+  background: rgba(0, 180, 216, 0.2);
+  border-radius: 20px;
+  border-bottom: 1px solid #00B4D8;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background: rgba(0, 180, 216, 0.3);
+  }
+}
+
+.terms-text {
+  color: #163252;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: -0.24px;
+}
+
+.review-section {
+  position: relative;
+}
+
+.review-container {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(97, 136, 140, 0.20) 100%);
+  border-radius: 20px;
+  border-bottom: 1px solid #00B4D8;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.review-title {
+  color: #163252;
+  font-weight: bold;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.24px;
+}
+
+.review-subtitle {
+  color: #163252;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: -0.11px;
+  line-height: 10px;
+}
+
+.review-textarea {
+  width: 100%;
+  height: 200px;
+  background: transparent;
+  color: #163252;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: -0.11px;
+  line-height: 10px;
+  border: none;
+  outline: none;
+  resize: none;
+  
+  &::placeholder {
+    color: #163252;
+    text-transform: uppercase;
+  }
+}
+
+.send-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.send-button {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  border-bottom: 1px solid #00B4D8;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.send-text {
+  color: #163252;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: -0.16px;
+  line-height: 10px;
+}
