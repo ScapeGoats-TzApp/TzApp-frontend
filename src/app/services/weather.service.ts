@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map, switchMap, catchError, of } from 'rxjs';
 import { GoogleMapsService } from './google-maps.service';
+import { WeatherMlService } from './weather-ml.service';
 import { environment } from '../../environments/environment';
 
 declare var google: any;
@@ -16,6 +17,7 @@ export interface WeatherData {
   // Basic weather info
   temperature: number;
   description: string;
+  mlCategory?: string; // ML predicted weather category
   humidity: number;
   windSpeed: number;
   pressure: number;
@@ -119,7 +121,11 @@ export class WeatherService {
   private readonly OPENWEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather';
   private readonly OPENWEATHER_FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
-  constructor(private http: HttpClient, private googleMapsService: GoogleMapsService) {}
+  constructor(
+    private http: HttpClient, 
+    private googleMapsService: GoogleMapsService,
+    private weatherMlService: WeatherMlService
+  ) {}
 
   getWeatherData(cityName: string): Observable<WeatherResponse> {
     return this.getLocationFromCity(cityName).pipe(
@@ -260,42 +266,66 @@ export class WeatherService {
     const url = `${this.OPENWEATHER_URL}?lat=${lat}&lon=${lng}&appid=${this.OPENWEATHER_API_KEY}&units=metric`;
     
     return this.http.get<any>(url).pipe(
-      map(response => ({
-        // Basic weather info
-        temperature: Math.round(response.main.temp),
-        description: response.weather[0].description,
-        humidity: response.main.humidity,
-        windSpeed: response.wind.speed,
-        pressure: response.main.pressure,
-        feelsLike: Math.round(response.main.feels_like),
-        icon: response.weather[0].icon,
+      switchMap(response => {
+        // First get the weather data
+        const weatherData: WeatherData = {
+          // Basic weather info
+          temperature: Math.round(response.main.temp),
+          description: response.weather[0].description,
+          humidity: response.main.humidity,
+          windSpeed: response.wind.speed,
+          pressure: response.main.pressure,
+          feelsLike: Math.round(response.main.feels_like),
+          icon: response.weather[0].icon,
+          
+          // Extended weather data
+          tempMin: Math.round(response.main.temp_min),
+          tempMax: Math.round(response.main.temp_max),
+          visibility: response.visibility ? Math.round(response.visibility / 1000) : 0, // Convert to km
+          cloudiness: response.clouds.all,
+          windDirection: response.wind.deg,
+          windGust: response.wind.gust,
+          
+          // Atmospheric data
+          seaLevelPressure: response.main.sea_level,
+          groundLevelPressure: response.main.grnd_level,
+          
+          // Weather conditions
+          weatherId: response.weather[0].id,
+          weatherMain: response.weather[0].main,
+          
+          // Time data
+          timestamp: response.dt,
+          sunrise: response.sys.sunrise,
+          sunset: response.sys.sunset,
+          
+          // Location data
+          country: response.sys.country,
+          cityName: response.name,
+          timezone: response.timezone
+        };
+
+        // Convert to ML format and get categorization
+        const mlData = this.weatherMlService.convertToMlFormat(response);
         
-        // Extended weather data
-        tempMin: Math.round(response.main.temp_min),
-        tempMax: Math.round(response.main.temp_max),
-        visibility: response.visibility ? Math.round(response.visibility / 1000) : 0, // Convert to km
-        cloudiness: response.clouds.all,
-        windDirection: response.wind.deg,
-        windGust: response.wind.gust,
-        
-        // Atmospheric data
-        seaLevelPressure: response.main.sea_level,
-        groundLevelPressure: response.main.grnd_level,
-        
-        // Weather conditions
-        weatherId: response.weather[0].id,
-        weatherMain: response.weather[0].main,
-        
-        // Time data
-        timestamp: response.dt,
-        sunrise: response.sys.sunrise,
-        sunset: response.sys.sunset,
-        
-        // Location data
-        country: response.sys.country,
-        cityName: response.name,
-        timezone: response.timezone
-      }))
+        return this.weatherMlService.categorizeWeather(mlData).pipe(
+          map(mlCategory => {
+            const formattedCategory = this.weatherMlService.formatCategoryForDisplay(mlCategory);
+            return {
+              ...weatherData,
+              description: formattedCategory, // Replace original description with formatted ML category
+              mlCategory: mlCategory  // Store original ML category
+            };
+          }),
+          catchError(error => {
+            console.warn('ML categorization failed, using original description:', error);
+            return of({
+              ...weatherData,
+              mlCategory: weatherData.description // Fallback to original description
+            });
+          })
+        );
+      })
     );
   }
 
@@ -303,7 +333,7 @@ export class WeatherService {
     const url = `${this.OPENWEATHER_FORECAST_URL}?lat=${lat}&lon=${lng}&appid=${this.OPENWEATHER_API_KEY}&units=metric`;
     
     return this.http.get<any>(url).pipe(
-      map(response => {
+      switchMap(response => {
         // Group forecast data by date and get daily summaries
         const dailyForecasts = new Map<string, any[]>();
         
@@ -315,17 +345,18 @@ export class WeatherService {
           dailyForecasts.get(date)!.push(item);
         });
 
-        // Convert to ForecastData array
-        const forecastData: ForecastData[] = [];
+        // Convert to ForecastData array with ML categorization
+        const forecastPromises: Observable<ForecastData>[] = [];
         const sortedDates = Array.from(dailyForecasts.keys()).sort();
         
         sortedDates.slice(0, 5).forEach(date => {
           const dayData = dailyForecasts.get(date)!;
-          const dayForecast = this.processDailyForecast(dayData, date);
-          forecastData.push(dayForecast);
+          const forecastObs = this.processDailyForecastWithML(dayData, date);
+          forecastPromises.push(forecastObs);
         });
 
-        return forecastData;
+        // Wait for all ML categorizations to complete
+        return forkJoin(forecastPromises);
       })
     );
   }
@@ -390,6 +421,37 @@ export class WeatherService {
       precipitation: Math.round(totalPrecipitation * 10) / 10,
       precipitationChance
     };
+  }
+
+  private processDailyForecastWithML(dayData: any[], date: string): Observable<ForecastData> {
+    // First get the basic forecast data
+    const basicForecast = this.processDailyForecast(dayData, date);
+    
+    // Find the main forecast for ML categorization
+    const mainForecast = dayData.find(item => {
+      const hour = new Date(item.dt * 1000).getHours();
+      return hour >= 12 && hour <= 15;
+    }) || dayData[Math.floor(dayData.length / 2)];
+
+    // Convert to ML format and get categorization
+    const mlData = this.weatherMlService.convertToMlFormat(mainForecast);
+    
+    return this.weatherMlService.categorizeWeather(mlData).pipe(
+      map(mlCategory => {
+        const formattedCategory = this.weatherMlService.formatCategoryForDisplay(mlCategory);
+        return {
+          ...basicForecast,
+          weather: {
+            ...basicForecast.weather,
+            description: formattedCategory // Replace with formatted ML category
+          }
+        };
+      }),
+      catchError(error => {
+        console.warn('ML forecast categorization failed for date', date, ':', error);
+        return of(basicForecast); // Return original forecast on error
+      })
+    );
   }
 
   private getElevationFromLocation(lat: number, lng: number): Observable<ElevationData> {
