@@ -1,9 +1,35 @@
 <div class="min-h-screen bg-gradient-main pb-24 overflow-x-hidden">
-    <div class="max-w-[412px] mx-auto px-[6px]">
+  <div class="max-w-[412px] mx-auto px-[6px]">
+    <!-- Search Bar -->
+    <div class="pt-4 mb-4">
+      <app-search-autocomplete
+        placeholder="Search for a city"
+        [disabled]="loading()"
+        (placeSelected)="onPlaceSelected($event)"
+      ></app-search-autocomplete>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="text-center py-12">
+        <div class="inline-block w-12 h-12 border-4 border-cyan border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-navy-90 font-bold text-sm mt-4">Loading weather data...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="bg-red-500/20 rounded-[20px] border-b border-red-500 p-4 mb-4">
+        <p class="text-red-700 font-bold text-sm">{{ error() }}</p>
+      </div>
+    }
+
+    <!-- Weather Content -->
+    @if (weatherData() && !loading()) {
       <!-- Header -->
-      <div class="text-center pt-4 mb-4">
-        <p class="text-navy-50 font-bold text-xs uppercase tracking-tight" style="letter-spacing: -1.05px;">MY LOCATION</p>
-        <h1 class="text-navy font-bold text-4xl uppercase" style="letter-spacing: -2.52px;">CRAIOVA</h1>
+      <div class="text-center mb-4">
+        <p class="text-navy-90 font-bold text-sm uppercase tracking-tight" style="letter-spacing: -1.05px;">MY LOCATION</p>
+        <h1 class="text-navy font-bold text-4xl uppercase" style="letter-spacing: -2.52px;">{{ getLocationDisplayName() }}</h1>
       </div>
 
       <!-- Current Weather Card -->
@@ -11,138 +37,202 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <img 
-              src="https://api.builder.io/api/v1/image/assets/TEMP/07cee7ef515603d751ace342d5ed5c9e768c7933?width=202" 
-              alt="Sun" 
-              class="w-[100px] h-[100px]"
+              [src]="getWeatherIconUrl(weatherData()!.weather.icon)" 
+              [alt]="weatherData()!.weather.description" 
+              class="w-[80px] h-[120px]"
             />
             <div>
-              <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">26°C</p>
-              <p class="text-navy-90 font-bold text-sm" style="letter-spacing: -1.05px;">Sunny</p>
-              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">H:29°</p>
-              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">L:15°</p>
+              <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">{{ weatherData()!.weather.temperature }}°C</p>
+              <p class="text-navy-90 font-bold text-sm" style="letter-spacing: -1.05px;">{{ weatherData()!.weather.description }}</p>
+              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">H:{{ weatherData()!.weather.tempMax }}°</p>
+              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">L:{{ weatherData()!.weather.tempMin }}°</p>
             </div>
           </div>
           <img 
-            src="https://api.builder.io/api/v1/image/assets/TEMP/a8fd2c4cbfd6f326928f16aefb253ecad4893b7b?width=284" 
-            alt="Goat drinking" 
-            class="w-[142px] h-auto absolute right-4 top-6"
+            src="https://api.builder.io/api/v1/image/assets/TEMP/69135c87e725cbe79abd4f7d8a33ec4cdd5b4437?width=284" 
+            alt="Goat skiing" 
+            class="w-[142px] h-auto absolute right-4 top-8"
           />
         </div>
       </div>
 
       <!-- 5-Day Forecast -->
-      <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
-        <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">5-day forecast</p>
-        
-        <div class="space-y-0">
-          <div class="flex items-center justify-between py-2 border-b border-white/10">
-            <span class="text-navy-50 font-bold text-sm w-12">Today</span>
-            <img src="https://api.builder.io/api/v1/image/assets/TEMP/6bd058e86a0b82880e5e337cfd6a01e6ce0fd7d4?width=60" alt="" class="w-7 h-7" />
-            <span class="text-navy font-bold text-sm"><span class="text-red-500/50">17°</span> <span class="text-navy-50">/</span> 11°</span>
-            <span class="text-navy-50 font-bold text-sm flex-1 text-center lowercase">few clouds</span>
-            <span class="text-goat-sky font-bold text-sm">37%</span>
-            <svg class="w-5 h-5" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M1.375 8.9375C1.375 11.9369 3.05895 14.5285 5.5 15.7511V14.1627C3.85701 13.073 2.75 11.1575 2.75 8.9375C2.75 5.47282 5.44623 2.75 8.6682 2.75C11.4014 2.75 13.7563 4.7094 14.4078 7.41891L14.4099 7.41807C14.5019 7.79401 14.5606 8.18377 14.5824 8.58377C15.0108 8.36906 15.4874 8.25001 15.9839 8.25001C17.7411 8.25001 19.25 9.7416 19.25 11.6875C19.25 12.8635 18.6989 13.8735 17.875 14.4887V16.0837C19.4956 15.3329 20.625 13.647 20.625 11.6875C20.625 9.02963 18.5471 6.87501 15.9839 6.87501C15.885 6.87501 15.7868 6.87821 15.6895 6.88453C14.8267 3.70546 12.0099 1.375 8.6682 1.375C4.64028 1.375 1.375 4.76085 1.375 8.9375Z" fill="url(#paint0_linear)"/>
-              <defs><linearGradient id="paint0_linear" x1="11" y1="1.375" x2="11" y2="20.625" gradientUnits="userSpaceOnUse"><stop stop-color="#95B6F6"/><stop offset="1" stop-color="#5193DE"/></linearGradient></defs>
-            </svg>
-          </div>
+      @if (forecastData()) {
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">5-day forecast</p>
           
-          <div class="flex items-center justify-between py-2 border-b border-white/10">
-            <span class="text-navy-50 font-bold text-sm w-12">Mon</span>
-            <img src="https://api.builder.io/api/v1/image/assets/TEMP/6bd058e86a0b82880e5e337cfd6a01e6ce0fd7d4?width=60" alt="" class="w-7 h-7" />
-            <span class="text-navy font-bold text-sm"><span class="text-red-500/50">17°</span> <span class="text-navy-50">/</span> 11°</span>
-            <span class="text-navy-50 font-bold text-sm flex-1 text-center lowercase">broken clouds</span>
-            <span class="text-goat-sky font-bold text-sm">63%</span>
-            <svg class="w-5 h-5" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M1.375 8.9375C1.375 11.9369 3.05895 14.5285 5.5 15.7511V14.1627C3.85701 13.073 2.75 11.1575 2.75 8.9375C2.75 5.47282 5.44623 2.75 8.6682 2.75C11.4014 2.75 13.7563 4.7094 14.4078 7.41891L14.4099 7.41807C14.5019 7.79401 14.5606 8.18377 14.5824 8.58377C15.0108 8.36906 15.4874 8.25001 15.9839 8.25001C17.7411 8.25001 19.25 9.7416 19.25 11.6875C19.25 12.8635 18.6989 13.8735 17.875 14.4887V16.0837C19.4956 15.3329 20.625 13.647 20.625 11.6875C20.625 9.02963 18.5471 6.87501 15.9839 6.87501C15.885 6.87501 15.7868 6.87821 15.6895 6.88453C14.8267 3.70546 12.0099 1.375 8.6682 1.375C4.64028 1.375 1.375 4.76085 1.375 8.9375Z" fill="url(#paint0_linear)"/>
-              <defs><linearGradient id="paint0_linear" x1="11" y1="1.375" x2="11" y2="20.625" gradientUnits="userSpaceOnUse"><stop stop-color="#95B6F6"/><stop offset="1" stop-color="#5193DE"/></linearGradient></defs>
-            </svg>
-          </div>
-
-          <div class="flex items-center justify-between py-2 border-b border-white/10">
-            <span class="text-navy-50 font-bold text-sm w-12">Tue</span>
-            <img src="https://api.builder.io/api/v1/image/assets/TEMP/6bd058e86a0b82880e5e337cfd6a01e6ce0fd7d4?width=60" alt="" class="w-7 h-7" />
-            <span class="text-navy font-bold text-sm"><span class="text-red-500/50">17°</span> <span class="text-navy-50">/</span> 11°</span>
-            <span class="text-navy-50 font-bold text-sm flex-1 text-center lowercase">clear sky</span>
-            <span class="text-goat-sky font-bold text-sm">21%</span>
-            <svg class="w-5 h-5" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M1.375 8.9375C1.375 11.9369 3.05895 14.5285 5.5 15.7511V14.1627C3.85701 13.073 2.75 11.1575 2.75 8.9375C2.75 5.47282 5.44623 2.75 8.6682 2.75C11.4014 2.75 13.7563 4.7094 14.4078 7.41891L14.4099 7.41807C14.5019 7.79401 14.5606 8.18377 14.5824 8.58377C15.0108 8.36906 15.4874 8.25001 15.9839 8.25001C17.7411 8.25001 19.25 9.7416 19.25 11.6875C19.25 12.8635 18.6989 13.8735 17.875 14.4887V16.0837C19.4956 15.3329 20.625 13.647 20.625 11.6875C20.625 9.02963 18.5471 6.87501 15.9839 6.87501C15.885 6.87501 15.7868 6.87821 15.6895 6.88453C14.8267 3.70546 12.0099 1.375 8.6682 1.375C4.64028 1.375 1.375 4.76085 1.375 8.9375Z" fill="url(#paint0_linear)"/>
-              <defs><linearGradient id="paint0_linear" x1="11" y1="1.375" x2="11" y2="20.625" gradientUnits="userSpaceOnUse"><stop stop-color="#95B6F6"/><stop offset="1" stop-color="#5193DE"/></linearGradient></defs>
-            </svg>
-          </div>
-
-          <div class="flex items-center justify-between py-2 border-b border-white/10">
-            <span class="text-navy-50 font-bold text-sm w-12">Wed</span>
-            <img src="https://api.builder.io/api/v1/image/assets/TEMP/6bd058e86a0b82880e5e337cfd6a01e6ce0fd7d4?width=60" alt="" class="w-7 h-7" />
-            <span class="text-navy font-bold text-sm"><span class="text-red-500/50">17°</span> <span class="text-navy-50">/</span> 11°</span>
-            <span class="text-navy-50 font-bold text-sm flex-1 text-center lowercase">broken clouds</span>
-            <span class="text-goat-sky font-bold text-sm">79%</span>
-            <svg class="w-5 h-5" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M1.375 8.9375C1.375 11.9369 3.05895 14.5285 5.5 15.7511V14.1627C3.85701 13.073 2.75 11.1575 2.75 8.9375C2.75 5.47282 5.44623 2.75 8.6682 2.75C11.4014 2.75 13.7563 4.7094 14.4078 7.41891L14.4099 7.41807C14.5019 7.79401 14.5606 8.18377 14.5824 8.58377C15.0108 8.36906 15.4874 8.25001 15.9839 8.25001C17.7411 8.25001 19.25 9.7416 19.25 11.6875C19.25 12.8635 18.6989 13.8735 17.875 14.4887V16.0837C19.4956 15.3329 20.625 13.647 20.625 11.6875C20.625 9.02963 18.5471 6.87501 15.9839 6.87501C15.885 6.87501 15.7868 6.87821 15.6895 6.88453C14.8267 3.70546 12.0099 1.375 8.6682 1.375C4.64028 1.375 1.375 4.76085 1.375 8.9375Z" fill="url(#paint0_linear)"/>
-              <defs><linearGradient id="paint0_linear" x1="11" y1="1.375" x2="11" y2="20.625" gradientUnits="userSpaceOnUse"><stop stop-color="#95B6F6"/><stop offset="1" stop-color="#5193DE"/></linearGradient></defs>
-            </svg>
-          </div>
-
-          <div class="flex items-center justify-between py-2">
-            <span class="text-navy-50 font-bold text-sm w-12">Thu</span>
-            <img src="https://api.builder.io/api/v1/image/assets/TEMP/6bd058e86a0b82880e5e337cfd6a01e6ce0fd7d4?width=60" alt="" class="w-7 h-7" />
-            <span class="text-navy font-bold text-sm"><span class="text-red-500/50">17°</span> <span class="text-navy-50">/</span> 11°</span>
-            <span class="text-navy-50 font-bold text-sm flex-1 text-center lowercase">few clouds</span>
-            <span class="text-goat-sky font-bold text-sm">32%</span>
-            <svg class="w-5 h-5" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M1.375 8.9375C1.375 11.9369 3.05895 14.5285 5.5 15.7511V14.1627C3.85701 13.073 2.75 11.1575 2.75 8.9375C2.75 5.47282 5.44623 2.75 8.6682 2.75C11.4014 2.75 13.7563 4.7094 14.4078 7.41891L14.4099 7.41807C14.5019 7.79401 14.5606 8.18377 14.5824 8.58377C15.0108 8.36906 15.4874 8.25001 15.9839 8.25001C17.7411 8.25001 19.25 9.7416 19.25 11.6875C19.25 12.8635 18.6989 13.8735 17.875 14.4887V16.0837C19.4956 15.3329 20.625 13.647 20.625 11.6875C20.625 9.02963 18.5471 6.87501 15.9839 6.87501C15.885 6.87501 15.7868 6.87821 15.6895 6.88453C14.8267 3.70546 12.0099 1.375 8.6682 1.375C4.64028 1.375 1.375 4.76085 1.375 8.9375Z" fill="url(#paint0_linear)"/>
-              <defs><linearGradient id="paint0_linear" x1="11" y1="1.375" x2="11" y2="20.625" gradientUnits="userSpaceOnUse"><stop stop-color="#95B6F6"/><stop offset="1" stop-color="#5193DE"/></linearGradient></defs>
-            </svg>
+          <div class="space-y-0">
+            @for (day of forecastData()!.forecast; track day.date; let i = $index; let isLast = $last) {
+              <div class="flex items-center justify-between py-2" [class.border-b]="!isLast" [class.border-white/10]="!isLast">
+                <span class="text-navy-50 font-bold text-sm w-12">{{ getDayLabel(i) }}</span>
+                <img [src]="getWeatherIconUrl(day.weather.icon)" [alt]="day.weather.description" class="w-7 h-7" />
+                <span class="text-navy font-bold text-sm"><span class="text-red-500/50">{{ day.temperature.max }}°</span> <span class="text-navy-50">/</span> {{ day.temperature.min }}°</span>
+                <span class="text-navy-50 font-bold text-sm flex-1 text-center lowercase">{{ day.weather.description }}</span>
+                <span class="text-goat-sky font-bold text-sm">{{ day.precipitationChance }}%</span>
+                <svg class="w-5 h-5" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient [attr.id]="'paint0_linear_' + i" x1="11" y1="1.375" x2="11" y2="20.625" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#95B6F6"/>
+                      <stop offset="1" stop-color="#5193DE"/>
+                    </linearGradient>
+                  </defs>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M1.375 8.9375C1.375 11.9369 3.05895 14.5285 5.5 15.7511V14.1627C3.85701 13.073 2.75 11.1575 2.75 8.9375C2.75 5.47282 5.44623 2.75 8.6682 2.75C11.4014 2.75 13.7563 4.7094 14.4078 7.41891L14.4099 7.41807C14.5019 7.79401 14.5606 8.18377 14.5824 8.58377C15.0108 8.36906 15.4874 8.25001 15.9839 8.25001C17.7411 8.25001 19.25 9.7416 19.25 11.6875C19.25 12.8635 18.6989 13.8735 17.875 14.4887V16.0837C19.4956 15.3329 20.625 13.647 20.625 11.6875C20.625 9.02963 18.5471 6.87501 15.9839 6.87501C15.885 6.87501 15.7868 6.87821 15.6895 6.88453C14.8267 3.70546 12.0099 1.375 8.6682 1.375C4.64028 1.375 1.375 4.76085 1.375 8.9375Z" [attr.fill]="'url(#paint0_linear_' + i + ')'"/>
+                </svg>
+              </div>
+            }
           </div>
         </div>
-      </div>
+      }
 
       <!-- Precipitation Map -->
       <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
         <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">Precipitation</p>
         <div class="w-full h-[259px] rounded-[20px] overflow-hidden">
-          <img 
-            src="https://api.builder.io/api/v1/image/assets/TEMP/87ac48cbc3292ad34788ed730c723baea4329398?width=815" 
-            alt="Precipitation map" 
-            class="w-full h-full object-cover"
-          />
+          <iframe 
+            [src]="getWindyMapUrl()"
+            width="100%" 
+            height="100%" 
+            frameborder="0"
+            class="rounded-[20px]"
+            allowfullscreen>
+          </iframe>
         </div>
       </div>
 
-      <!-- Info Grid -->
+      <!-- Info Grid Row 1 -->
       <div class="grid grid-cols-2 gap-4 mb-4">
         <!-- Feels Like -->
         <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
           <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">FEELS LIKE</p>
-          <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">19°</p>
-          <p class="text-navy-50 font-bold text-sm lowercase mb-2">actual: 23°</p>
+          <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ weatherData()!.weather.feelsLike }}°</p>
+          <p class="text-navy-50 font-bold text-sm lowercase mb-2">actual: {{ weatherData()!.weather.temperature }}°</p>
           <div class="flex items-center gap-2 mb-2">
-            <p class="text-navy-50 font-bold text-sm lowercase">4°</p>
-            <svg class="w-3 h-3 rotate-90" viewBox="0 0 12 19" fill="none">
+            <p class="text-navy-50 font-bold text-sm lowercase">{{ Math.abs(weatherData()!.weather.temperature - weatherData()!.weather.feelsLike) }}°</p>
+            <svg class="w-3 h-3" [class.rotate-90]="weatherData()!.weather.feelsLike < weatherData()!.weather.temperature" [class.-rotate-90]="weatherData()!.weather.feelsLike > weatherData()!.weather.temperature" viewBox="0 0 12 21" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7 1C7 0.447715 6.55228 0 6 0C5.44772 0 5 0.447715 5 1H6L7 1ZM6 20.7735L11.7735 15L6 9.2265L0.226497 15L6 20.7735ZM6 1H5L5 15H6H7L7 1L6 1Z" fill="#46738B"/>
             </svg>
           </div>
           <div class="h-px bg-gradient-to-r from-navy to-cyan-light/40 mb-2"></div>
-          <p class="text-navy-50 font-bold text-xs lowercase leading-tight">It feels colder than the actual temperature</p>
+          <p class="text-navy-50 font-bold text-xs lowercase leading-tight">
+            {{ weatherData()!.weather.feelsLike < weatherData()!.weather.temperature ? 'It feels colder than the actual temperature' : 'It feels warmer than the actual temperature' }}
+          </p>
         </div>
 
         <!-- Elevation -->
         <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
           <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">ELEVATION</p>
-          <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">100</p>
+          <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ weatherData()!.elevation.elevation || 'N/A' }}</p>
           <p class="text-navy-50 font-bold text-sm lowercase mb-2">meter</p>
           <p class="text-navy-50 font-bold text-sm lowercase leading-tight mb-1">above sea level</p>
-          <p class="text-navy-50 font-bold text-xs uppercase leading-tight">44°18'47.6"N<br>23°47'33.0"E</p>
+          <p class="text-navy-50 font-bold text-xs uppercase leading-tight">{{ formatCoordinates(weatherData()!.location.lat, weatherData()!.location.lng).lat }}<br>{{ formatCoordinates(weatherData()!.location.lat, weatherData()!.location.lng).lng }}</p>
+        </div>
+      </div>
+
+      <!-- Sunrise and Sunset -->
+      <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
+        <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">SUNRISE AND SUNSET</p>
+        <div class="flex items-center justify-between mb-8">
+          <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(weatherData()!.weather.sunrise) }}</p>
+        </div>
+        <p class="text-navy-50 font-bold text-sm capitalize absolute bottom-4 right-4" style="letter-spacing: -0.15px;">Sunset: {{ formatTime(weatherData()!.weather.sunset) }}</p>
+      
+      <!-- Sunset indicator bar -->
+      <div class="relative mt-4">
+        <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_sunset)"/>
+          <defs>
+            <linearGradient id="paint0_linear_sunset" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#26658C"/>
+              <stop offset="0.0865385" stop-color="#C09A00"/>
+              <stop offset="0.370192" stop-color="#FFEA00"/>
+              <stop offset="0.495192" stop-color="#FFF49A"/>
+              <stop offset="0.586538" stop-color="#FFE000"/>
+              <stop offset="0.913462" stop-color="#C09A00"/>
+              <stop offset="1" stop-color="#011C40" stop-opacity="0.88"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <!-- Sun position indicator -->
+        <svg class="absolute -top-2 right-[20px]" style="transform: rotate(-90deg)" width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 0.226498L0.226497 6L6 11.7735L11.7735 6L6 0.226498ZM6 17L7 17L7 6L6 6L5 6L5 17L6 17Z" fill="#CFB005"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- UV Index -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">UV INDEX</p>
+      <div class="mb-6">
+        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">1</p>
+        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">low</p>
+      </div>
+      
+      <!-- UV Index gradient bar -->
+      <div class="relative">
+        <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv)"/>
+          <defs>
+            <linearGradient id="paint0_linear_uv" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#268C48"/>
+              <stop offset="0.0865385" stop-color="#C09A00"/>
+              <stop offset="0.289568" stop-color="#CF5701"/>
+              <stop offset="0.495192" stop-color="#D33335"/>
+              <stop offset="0.732416" stop-color="#D8000B"/>
+              <stop offset="0.913462" stop-color="#C00087"/>
+              <stop offset="1" stop-color="#290140" stop-opacity="0.88"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+      <!-- Info Grid Row 2 -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Visibility -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">VISIBILITY</p>
+          <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ weatherData()!.weather.visibility }} km</p>
+          <p class="text-navy-50 font-bold text-sm lowercase leading-tight">{{ weatherData()!.weather.visibility > 10 ? 'Perfectly clear view.' : 'Limited visibility.' }}</p>
+        </div>
+
+        <!-- Precipitation Chances -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">CLOUDINESS</p>
+          <div class="mb-2">
+            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ weatherData()!.weather.cloudiness }}%</p>
+            <p class="text-navy-50 font-bold text-2xl" style="letter-spacing: -0.24px;">CLOUDS</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Grid Row 3 -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Pressure -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">PRESSURE</p>
+          <p class="text-navy-50 font-bold text-4xl mb-12" style="letter-spacing: -0.36px;">{{ weatherData()!.weather.pressure }}</p>
+          <p class="text-navy-50 font-bold text-sm lowercase text-right">mbar</p>
+        </div>
+
+        <!-- Humidity -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">HUMIDITY</p>
+          <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ weatherData()!.weather.humidity }}%</p>
+          <p class="text-navy-50 font-bold text-sm lowercase leading-tight">{{ weatherData()!.weather.humidity > 70 ? 'high humidity' : 'moderate humidity' }}</p>
         </div>
       </div>
 
       <!-- Page indicator -->
       <div class="flex justify-center gap-3 mb-4">
+        <div class="w-6 h-6 rounded-full bg-gray-300/80"></div>
         <div class="w-6 h-6 rounded-full bg-goat-blue/80 border border-white/15"></div>
-        <div class="w-6 h-6 rounded-full bg-gray-300"></div>
-        <div class="w-6 h-6 rounded-full bg-gray-300"></div>
+        <div class="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center">
+          <div class="w-0.5 h-3 bg-goat-teal"></div>
+          <div class="w-3 h-0.5 bg-goat-teal absolute"></div>
+        </div>
       </div>
-    </div>
-
-    <app-navigation></app-navigation>
+    }
   </div>
+
+  <app-navigation></app-navigation>
+</div>

@@ -1,0 +1,134 @@
+.search-container {
+  position: relative;
+  width: 100%;
+}
+
+.search-wrapper {
+  position: relative;
+  width: 100%;
+  background: rgba(167, 235, 242, 0.2);
+  border-radius: 20px;
+  border-bottom: 1px solid rgba(167, 235, 242, 0.5);
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+.search-icon {
+  color: rgba(1, 28, 64, 0.5);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(1, 28, 64, 0.9);
+  letter-spacing: -0.5px;
+  
+  &::placeholder {
+    color: rgba(1, 28, 64, 0.4);
+    font-weight: 600;
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(1, 28, 64, 0.1);
+  border-top-color: rgba(1, 28, 64, 0.5);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(1, 28, 64, 0.15);
+  border: 1px solid rgba(167, 235, 242, 0.5);
+  overflow: hidden;
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid rgba(167, 235, 242, 0.2);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover,
+  &.selected {
+    background: rgba(167, 235, 242, 0.3);
+  }
+}
+
+.location-icon {
+  color: rgba(1, 28, 64, 0.5);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.suggestion-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggestion-main {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(1, 28, 64, 0.9);
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-secondary {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(1, 28, 64, 0.5);
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+

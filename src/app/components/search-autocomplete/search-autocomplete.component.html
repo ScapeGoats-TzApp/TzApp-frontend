@@ -1,0 +1,55 @@
+<div class="search-container">
+  <div class="search-wrapper">
+    <div class="search-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <input
+      type="text"
+      [value]="inputValue()"
+      (input)="onInputChange($event)"
+      (focus)="onInputFocus()"
+      (blur)="onInputBlur()"
+      (keydown)="onKeyDown($event)"
+      [placeholder]="googleMapsReady() ? placeholder : 'Loading...'"
+      [disabled]="disabled || !googleMapsReady()"
+      class="search-input"
+    />
+    @if (loading()) {
+      <div class="loading-indicator">
+        <div class="spinner"></div>
+      </div>
+    }
+  </div>
+
+  @if (showSuggestions() && predictions().length > 0) {
+    <div class="suggestions-dropdown">
+      @for (prediction of predictions(); track prediction.place_id; let i = $index) {
+        <div
+          class="suggestion-item"
+          [class.selected]="i === selectedIndex()"
+          (click)="selectPrediction(prediction)"
+          (mousedown)="$event.preventDefault()"
+        >
+          <div class="location-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 0C4.69 0 2 2.69 2 6c0 4.5 6 10 6 10s6-5.5 6-10c0-3.31-2.69-6-6-6zm0 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="suggestion-content">
+            <div class="suggestion-main">
+              {{ getPredictionDisplayText(prediction) }}
+            </div>
+            @if (getPredictionSecondaryText(prediction)) {
+              <div class="suggestion-secondary">
+                {{ getPredictionSecondaryText(prediction) }}
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
