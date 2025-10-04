@@ -745,4 +745,87 @@ export class HomePage implements OnInit {
     const searchWeatherData = this.searchWeatherData();
     return searchWeatherData?.weather.cloudiness || 0;
   }
+
+  // Get weather goat image based on ML category
+  getWeatherGoatImage(weatherData: any): string {
+    console.log('Weather data for goat image:', weatherData);
+    console.log('ML Category:', weatherData?.weather?.mlCategory);
+    
+    if (!weatherData?.weather?.mlCategory) {
+      console.log('No ML category found, using default sunny image');
+      return 'assets/weather_goats/sunny.png'; // Default to sunny
+    }
+
+    const category = weatherData.weather.mlCategory.toLowerCase();
+    console.log('Category (lowercase):', category);
+    
+    let imagePath = '';
+    switch (category) {
+      case 'cold':
+        imagePath = 'assets/weather_goats/cold.png';
+        break;
+      case 'hot':
+        imagePath = 'assets/weather_goats/hot.png';
+        break;
+      case 'sunny':
+        imagePath = 'assets/weather_goats/sunny.png';
+        break;
+      case 'snow':
+        imagePath = 'assets/weather_goats/snow.png';
+        break;
+      case 'light_rain':
+        imagePath = 'assets/weather_goats/light_rain.png';
+        break;
+      case 'heavy_rain':
+        imagePath = 'assets/weather_goats/heavy_rain.png';
+        break;
+      default:
+        imagePath = 'assets/weather_goats/sunny.png'; // Default fallback
+    }
+    
+    console.log('Selected image path:', imagePath);
+    return imagePath;
+  }
+
+  // Get weather goat image for current location
+  getCurrentWeatherGoatImage(): string {
+    return this.getWeatherGoatImage(this.weatherData());
+  }
+
+  // Get weather goat image for saved location
+  getSavedWeatherGoatImage(): string {
+    return this.getWeatherGoatImage(this.savedWeatherData());
+  }
+
+  // Get weather goat image for search location
+  getSearchWeatherGoatImage(): string {
+    return this.getWeatherGoatImage(this.searchWeatherData());
+  }
+
+  // Get weather goat image for historical location
+  getHistoricalWeatherGoatImage(): string {
+    const historicalData = this.historicalWeatherData();
+    if (!historicalData) {
+      return 'assets/weather_goats/sunny.png';
+    }
+    
+    // For historical data, we need to determine the weather type from the available data
+    // This is a simplified approach - you might want to enhance this based on your ML model
+    const temp = historicalData.temperature.current || historicalData.temperature.max;
+    const precipitation = historicalData.precipitation || 0;
+    
+    if (precipitation > 5) {
+      return 'assets/weather_goats/heavy_rain.png';
+    } else if (precipitation > 0) {
+      return 'assets/weather_goats/light_rain.png';
+    } else if (temp < 0) {
+      return 'assets/weather_goats/snow.png';
+    } else if (temp < 10) {
+      return 'assets/weather_goats/cold.png';
+    } else if (temp > 30) {
+      return 'assets/weather_goats/hot.png';
+    } else {
+      return 'assets/weather_goats/sunny.png';
+    }
+  }
 }
