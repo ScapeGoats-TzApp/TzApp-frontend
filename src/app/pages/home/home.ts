@@ -2,22 +2,24 @@ import { Component, signal, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NavigationComponent } from '../../components/navigation';
-import { SearchPageComponent } from '../../components/search-page/search-page.component';
+import { SearchAutocompleteComponent } from '../../components/search-autocomplete/search-autocomplete.component';
+import { CalendarPickerComponent } from '../../components/calendar-picker/calendar-picker.component';
 import { WeatherService, WeatherResponse, ForecastResponse, PlacePrediction } from '../../services/weather.service';
 import { GeolocationService, GeolocationCoordinates, GeolocationError } from '../../services/geolocation.service';
 import { StorageService, SavedLocation } from '../../services/storage.service';
+import { OneCallService, NormalizedWeatherData } from '../../services/onecall.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NavigationComponent, SearchPageComponent],
+  imports: [CommonModule, NavigationComponent, SearchAutocompleteComponent, CalendarPickerComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
 export class HomePage implements OnInit {
   // Page management
-  currentPage = signal(0); // 0: My Location, 1: Saved Location, 2: Search
-  totalPages = 3;
+  currentPage = signal(0); // 0: My Location, 1: Saved Location, 2: Search, 3: Historical
+  totalPages = 4;
   
   // Weather data for different pages
   weatherData = signal<WeatherResponse | null>(null);
@@ -26,6 +28,11 @@ export class HomePage implements OnInit {
   savedForecastData = signal<ForecastResponse | null>(null);
   searchWeatherData = signal<WeatherResponse | null>(null);
   searchForecastData = signal<ForecastResponse | null>(null);
+  
+  // Historical weather data (Page 3)
+  historicalWeatherData = signal<NormalizedWeatherData | null>(null);
+  historicalSelectedDate = signal<Date>(new Date());
+  historicalLocation = signal<{ lat: number; lon: number; name: string } | null>(null);
   
   // UI state
   loading = signal(false);
@@ -38,9 +45,6 @@ export class HomePage implements OnInit {
   savedLocation = signal<SavedLocation | null>(null);
   hasSavedLocation = signal(false);
   
-  // Calendar picker for search page
-  selectedDate = signal(new Date());
-  
   // Touch/swipe handling
   touchStartX = 0;
   touchStartY = 0;
@@ -51,7 +55,8 @@ export class HomePage implements OnInit {
     private weatherService: WeatherService,
     private geolocationService: GeolocationService,
     private storageService: StorageService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private oneCallService: OneCallService
   ) {}
 
   ngOnInit(): void {
@@ -252,13 +257,6 @@ export class HomePage implements OnInit {
         console.warn('Failed to fetch forecast data:', err.message);
       }
     });
-  }
-
-  onDateSelected(date: Date): void {
-    this.selectedDate.set(date);
-    console.log('Selected date:', date);
-    // Here you can implement logic to fetch weather data for the selected date
-    // For example, you could call a historical weather API or adjust the forecast data
   }
 
   getWeatherIconUrl(icon: string): string {
@@ -466,11 +464,87 @@ export class HomePage implements OnInit {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  getFormattedDate(): string {
-    const date = this.selectedDate();
-    const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'short' });
-    const year = date.getFullYear();
-    return `${day}/${month}/${year} forecast`;
+  // Historical weather methods (Page 3)
+  onHistoricalDateSelected(date: Date): void {
+    this.historicalSelectedDate.set(date);
+    if (this.historicalLocation()) {
+      this.loadHistoricalWeather();
+    }
+  }
+
+  onHistoricalPlaceSelected(prediction: PlacePrediction): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    // Get place details to extract coordinates
+    this.weatherService.getWeatherDataFromPlaceId(prediction.place_id).subscribe({
+      next: (data) => {
+        this.historicalLocation.set({
+          lat: data.location.lat,
+          lon: data.location.lng,
+          name: data.weather.cityName
+        });
+        this.loadHistoricalWeather();
+      },
+      error: (err) => {
+        this.error.set(err.message || 'Failed to fetch location data');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private loadHistoricalWeather(): void {
+    const location = this.historicalLocation();
+    const date = this.historicalSelectedDate();
+
+    if (!location) return;
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.oneCallService.getWeatherForDate(location.lat, location.lon, date).subscribe({
+      next: (data) => {
+        this.historicalWeatherData.set(data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.message || 'Failed to fetch weather data');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  getHistoricalLocationDisplayName(): string {
+    if (!this.historicalLocation()) {
+      return 'SELECT A LOCATION';
+    }
+    return this.historicalLocation()!.name.toUpperCase();
+  }
+
+  getHistoricalDateType(): string {
+    const data = this.historicalWeatherData();
+    if (!data) return '';
+    return data.type.toUpperCase();
+  }
+
+  getHistoricalFormattedDate(): string {
+    return this.historicalSelectedDate().toLocaleDateString('en-US', { 
+      weekday: 'long',
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  }
+
+  getHistoricalWindyMapUrl(): SafeResourceUrl {
+    if (!this.historicalLocation()) {
+      return this.sanitizer.bypassSecurityTrustResourceUrl('https://embed.windy.com/embed2.html?lat=44.318&lon=23.797&zoom=12&level=surface&overlay=rain&menu=&message=&marker=true&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=44.318&detailLon=23.797&metricWind=default&metricTemp=default&radarRange=-1');
+    }
+    
+    const lat = this.historicalLocation()!.lat;
+    const lng = this.historicalLocation()!.lon;
+    const url = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lng}&zoom=12&level=surface&overlay=rain&menu=&message=&marker=true&calendar=&pressure=&type=map&location=coordinates&detail=&detailLat=${lat}&detailLon=${lng}&metricWind=default&metricTemp=default&radarRange=-1`;
+    
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }

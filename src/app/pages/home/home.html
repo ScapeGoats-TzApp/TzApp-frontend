@@ -40,17 +40,40 @@
 
     <!-- Page 2: Search -->
     @if (currentPage() === 2) {
-      <app-search-page
-        [searchWeatherData]="searchWeatherData"
-        [searchForecastData]="searchForecastData"
-        [loading]="loading"
-        [error]="error"
-        [selectedDate]="selectedDate"
-        [hasSavedLocation]="hasSavedLocation"
+    <!-- Search Bar -->
+    <div class="pt-4 mb-4">
+      <app-search-autocomplete
+        placeholder="Search for a city"
+        [disabled]="loading()"
         (placeSelected)="onPlaceSelected($event)"
-        (dateSelected)="onDateSelected($event)"
-        (saveSearchLocation)="saveSearchLocation()"
-      ></app-search-page>
+      ></app-search-autocomplete>
+    </div>
+      
+      <!-- Save Search Location Button (only show if search has results and no location is saved) -->
+      @if (searchWeatherData() && !hasSavedLocation()) {
+        <div class="mb-4 text-center">
+          <button 
+            (click)="saveSearchLocation()" 
+            class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors">
+            Save This Location
+          </button>
+        </div>
+      }
+    }
+
+    <!-- Page 3: Historical Weather -->
+    @if (currentPage() === 3) {
+      <div class="pt-4">
+        <!-- Calendar & Location Picker -->
+        <div class="mb-4">
+          <app-calendar-picker
+            [selectedDate]="historicalSelectedDate()"
+            [disabled]="loading()"
+            (dateSelected)="onHistoricalDateSelected($event)"
+            (placeSelected)="onHistoricalPlaceSelected($event)"
+          ></app-calendar-picker>
+        </div>
+      </div>
     }
 
     <!-- Loading State -->
@@ -486,10 +509,446 @@
       </div>
     }
 
+    <!-- Weather Content for Search (Page 2) -->
+    @if (currentPage() === 2 && searchWeatherData() && !loading()) {
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <p class="text-navy-90 font-bold text-sm uppercase tracking-tight" style="letter-spacing: -1.05px;">SEARCHED LOCATION</p>
+        <h1 class="text-navy font-bold text-4xl uppercase" style="letter-spacing: -2.52px;">{{ getSearchLocationDisplayName() }}</h1>
+      </div>
+
+      <!-- Current Weather Card -->
+      <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <img 
+              [src]="getWeatherIconUrl(searchWeatherData()!.weather.icon)" 
+              [alt]="searchWeatherData()!.weather.description" 
+              class="w-[80px] h-[120px]"
+            />
+            <div>
+              <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">{{ searchWeatherData()!.weather.temperature }}°C</p>
+              <p class="text-navy-90 font-bold text-sm" style="letter-spacing: -1.05px;">{{ searchWeatherData()!.weather.description }}</p>
+              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">H:{{ searchWeatherData()!.weather.tempMax }}°</p>
+              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">L:{{ searchWeatherData()!.weather.tempMin }}°</p>
+            </div>
+          </div>
+          <img 
+            src="https://api.builder.io/api/v1/image/assets/TEMP/69135c87e725cbe79abd4f7d8a33ec4cdd5b4437?width=284" 
+            alt="Goat skiing" 
+            class="w-[142px] h-auto absolute right-4 top-8"
+          />
+        </div>
+      </div>
+
+      <!-- 5-Day Forecast for Search -->
+      @if (searchForecastData()) {
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">5-day forecast</p>
+          
+          <div class="space-y-0">
+            @for (day of searchForecastData()!.forecast; track day.date; let i = $index; let isLast = $last) {
+              <div class="flex items-center justify-between py-2" [class.border-b]="!isLast" [class.border-white/10]="!isLast">
+                <span class="text-navy-50 font-bold text-sm w-12">{{ getDayLabel(i) }}</span>
+                <img [src]="getWeatherIconUrl(day.weather.icon)" [alt]="day.weather.description" class="w-7 h-7" />
+                <span class="text-navy font-bold text-sm"><span class="text-red-500/50">{{ day.temperature.max }}°</span> <span class="text-navy-50">/</span> {{ day.temperature.min }}°</span>
+                <span class="text-navy-50 font-bold text-sm flex-1 text-center lowercase">{{ day.weather.description }}</span>
+                <span class="text-goat-sky font-bold text-sm">{{ day.precipitationChance }}%</span>
+                <svg class="w-5 h-5" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient [attr.id]="'paint0_linear_search_' + i" x1="11" y1="1.375" x2="11" y2="20.625" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#95B6F6"/>
+                      <stop offset="1" stop-color="#5193DE"/>
+                    </linearGradient>
+                  </defs>
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M1.375 8.9375C1.375 11.9369 3.05895 14.5285 5.5 15.7511V14.1627C3.85701 13.073 2.75 11.1575 2.75 8.9375C2.75 5.47282 5.44623 2.75 8.6682 2.75C11.4014 2.75 13.7563 4.7094 14.4078 7.41891L14.4099 7.41807C14.5019 7.79401 14.5606 8.18377 14.5824 8.58377C15.0108 8.36906 15.4874 8.25001 15.9839 8.25001C17.7411 8.25001 19.25 9.7416 19.25 11.6875C19.25 12.8635 18.6989 13.8735 17.875 14.4887V16.0837C19.4956 15.3329 20.625 13.647 20.625 11.6875C20.625 9.02963 18.5471 6.87501 15.9839 6.87501C15.885 6.87501 15.7868 6.87821 15.6895 6.88453C14.8267 3.70546 12.0099 1.375 8.6682 1.375C4.64028 1.375 1.375 4.76085 1.375 8.9375Z" [attr.fill]="'url(#paint0_linear_search_' + i + ')'"/>
+                </svg>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Precipitation Map for Search -->
+      <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+        <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">Precipitation</p>
+        <div class="w-full h-[259px] rounded-[20px] overflow-hidden">
+          <iframe 
+            [src]="getSearchWindyMapUrl()"
+            width="100%" 
+            height="100%" 
+            frameborder="0"
+            class="rounded-[20px]"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <!-- Info Grid Row 1 for Search -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Feels Like -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">FEELS LIKE</p>
+          <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ searchWeatherData()!.weather.feelsLike }}°</p>
+          <p class="text-navy-50 font-bold text-sm lowercase mb-2">actual: {{ searchWeatherData()!.weather.temperature }}°</p>
+          <div class="flex items-center gap-2 mb-2">
+            <p class="text-navy-50 font-bold text-sm lowercase">{{ Math.abs(searchWeatherData()!.weather.temperature - searchWeatherData()!.weather.feelsLike) }}°</p>
+            <svg class="w-3 h-3" [class.rotate-90]="searchWeatherData()!.weather.feelsLike < searchWeatherData()!.weather.temperature" [class.-rotate-90]="searchWeatherData()!.weather.feelsLike > searchWeatherData()!.weather.temperature" viewBox="0 0 12 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 1C7 0.447715 6.55228 0 6 0C5.44772 0 5 0.447715 5 1H6L7 1ZM6 20.7735L11.7735 15L6 9.2265L0.226497 15L6 20.7735ZM6 1H5L5 15H6H7L7 1L6 1Z" fill="#46738B"/>
+            </svg>
+          </div>
+          <div class="h-px bg-gradient-to-r from-navy to-cyan-light/40 mb-2"></div>
+          <p class="text-navy-50 font-bold text-xs lowercase leading-tight">
+            {{ searchWeatherData()!.weather.feelsLike < searchWeatherData()!.weather.temperature ? 'It feels colder than the actual temperature' : 'It feels warmer than the actual temperature' }}
+          </p>
+        </div>
+
+        <!-- Elevation -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">ELEVATION</p>
+          <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ searchWeatherData()!.elevation.elevation || 'N/A' }}</p>
+          <p class="text-navy-50 font-bold text-sm lowercase mb-2">meter</p>
+          <p class="text-navy-50 font-bold text-sm lowercase leading-tight mb-1">above sea level</p>
+          <p class="text-navy-50 font-bold text-xs uppercase leading-tight">{{ formatCoordinates(searchWeatherData()!.location.lat, searchWeatherData()!.location.lng).lat }}<br>{{ formatCoordinates(searchWeatherData()!.location.lat, searchWeatherData()!.location.lng).lng }}</p>
+        </div>
+      </div>
+
+      <!-- Sunrise and Sunset for Search -->
+      <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
+        <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">SUNRISE AND SUNSET</p>
+        <div class="flex items-center justify-between mb-8">
+          <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(searchWeatherData()!.weather.sunrise) }}</p>
+        </div>
+        <p class="text-navy-50 font-bold text-sm capitalize absolute bottom-4 right-4" style="letter-spacing: -0.15px;">Sunset: {{ formatTime(searchWeatherData()!.weather.sunset) }}</p>
+      
+      <!-- Sunset indicator bar -->
+      <div class="relative mt-4">
+        <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_sunset_search)"/>
+          <defs>
+            <linearGradient id="paint0_linear_sunset_search" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#26658C"/>
+              <stop offset="0.0865385" stop-color="#C09A00"/>
+              <stop offset="0.370192" stop-color="#FFEA00"/>
+              <stop offset="0.495192" stop-color="#FFF49A"/>
+              <stop offset="0.586538" stop-color="#FFE000"/>
+              <stop offset="0.913462" stop-color="#C09A00"/>
+              <stop offset="1" stop-color="#011C40" stop-opacity="0.88"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <!-- Sun position indicator -->
+        <svg class="absolute -top-2 right-[20px]" style="transform: rotate(-90deg)" width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 0.226498L0.226497 6L6 11.7735L11.7735 6L6 0.226498ZM6 17L7 17L7 6L6 6L5 6L5 17L6 17Z" fill="#CFB005"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- UV Index for Search -->
+    <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+      <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">UV INDEX</p>
+      <div class="mb-6">
+        <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">1</p>
+        <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">low</p>
+      </div>
+      
+      <!-- UV Index gradient bar -->
+      <div class="relative">
+        <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv_search)"/>
+          <defs>
+            <linearGradient id="paint0_linear_uv_search" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#268C48"/>
+              <stop offset="0.0865385" stop-color="#C09A00"/>
+              <stop offset="0.289568" stop-color="#CF5701"/>
+              <stop offset="0.495192" stop-color="#D33335"/>
+              <stop offset="0.732416" stop-color="#D8000B"/>
+              <stop offset="0.913462" stop-color="#C00087"/>
+              <stop offset="1" stop-color="#290140" stop-opacity="0.88"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+      <!-- Info Grid Row 2 for Search -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Visibility -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">VISIBILITY</p>
+          <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ searchWeatherData()!.weather.visibility }} km</p>
+          <p class="text-navy-50 font-bold text-sm lowercase leading-tight">{{ searchWeatherData()!.weather.visibility > 10 ? 'Perfectly clear view.' : 'Limited visibility.' }}</p>
+        </div>
+
+        <!-- Precipitation Chances -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">CLOUDINESS</p>
+          <div class="mb-2">
+            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ searchWeatherData()!.weather.cloudiness }}%</p>
+            <p class="text-navy-50 font-bold text-2xl" style="letter-spacing: -0.24px;">CLOUDS</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Grid Row 3 for Search -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Pressure -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">PRESSURE</p>
+          <p class="text-navy-50 font-bold text-4xl mb-12" style="letter-spacing: -0.36px;">{{ searchWeatherData()!.weather.pressure }}</p>
+          <p class="text-navy-50 font-bold text-sm lowercase text-right">mbar</p>
+        </div>
+
+        <!-- Humidity -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">HUMIDITY</p>
+          <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ searchWeatherData()!.weather.humidity }}%</p>
+          <p class="text-navy-50 font-bold text-sm lowercase leading-tight">{{ searchWeatherData()!.weather.humidity > 70 ? 'high humidity' : 'moderate humidity' }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- Weather Content for Historical (Page 3) -->
+    @if (currentPage() === 3 && historicalWeatherData() && !loading()) {
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <p class="text-navy-90 font-bold text-sm uppercase tracking-tight" style="letter-spacing: -1.05px;">{{ getHistoricalDateType() }} WEATHER</p>
+        <h1 class="text-navy font-bold text-4xl uppercase" style="letter-spacing: -2.52px;">{{ getHistoricalLocationDisplayName() }}</h1>
+        <p class="text-navy-50 font-bold text-xs mt-2">{{ getHistoricalFormattedDate() }}</p>
+      </div>
+
+      <!-- Current Weather Card -->
+      <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <!-- Weather icon removed for historical page -->
+            <div>
+              @if (historicalWeatherData()!.temperature.current !== undefined) {
+                <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">{{ historicalWeatherData()!.temperature.current }}°C</p>
+                <p class="text-navy-90 font-bold text-sm" style="letter-spacing: -1.05px;">{{ historicalWeatherData()!.weather?.description || 'Weather data' }}</p>
+                @if (historicalWeatherData()!.temperature.feels_like !== undefined) {
+                  <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">Feels like {{ historicalWeatherData()!.temperature.feels_like }}°</p>
+                }
+              } @else {
+                <p class="text-navy-90 font-bold text-4xl" style="letter-spacing: -2.52px;">{{ historicalWeatherData()!.temperature.max }}°C</p>
+                <p class="text-navy-90 font-bold text-sm" style="letter-spacing: -1.05px;">Daily Summary</p>
+              }
+              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">H:{{ historicalWeatherData()!.temperature.max }}°</p>
+              <p class="text-navy-90 font-bold text-2xl" style="letter-spacing: -1.68px;">L:{{ historicalWeatherData()!.temperature.min }}°</p>
+            </div>
+          </div>
+          <img 
+            src="https://api.builder.io/api/v1/image/assets/TEMP/69135c87e725cbe79abd4f7d8a33ec4cdd5b4437?width=284" 
+            alt="Goat skiing" 
+            class="w-[142px] h-auto absolute right-4 top-8"
+          />
+        </div>
+      </div>
+
+      <!-- Time-of-day temperatures (for daily summary) -->
+      @if (historicalWeatherData()!.temperature.afternoon !== undefined) {
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">Daily temperatures</p>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="text-center">
+              <p class="text-navy-50 font-bold text-xs mb-1">Morning</p>
+              <p class="text-navy-50 font-bold text-2xl">{{ historicalWeatherData()!.temperature.morning }}°</p>
+            </div>
+            <div class="text-center">
+              <p class="text-navy-50 font-bold text-xs mb-1">Afternoon</p>
+              <p class="text-navy-50 font-bold text-2xl">{{ historicalWeatherData()!.temperature.afternoon }}°</p>
+            </div>
+            <div class="text-center">
+              <p class="text-navy-50 font-bold text-xs mb-1">Evening</p>
+              <p class="text-navy-50 font-bold text-2xl">{{ historicalWeatherData()!.temperature.evening }}°</p>
+            </div>
+            <div class="text-center">
+              <p class="text-navy-50 font-bold text-xs mb-1">Night</p>
+              <p class="text-navy-50 font-bold text-2xl">{{ historicalWeatherData()!.temperature.night }}°</p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Precipitation Map (only for present day) -->
+      @if (historicalWeatherData()!.type === 'present' && historicalLocation()) {
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">Precipitation</p>
+          <div class="w-full h-[259px] rounded-[20px] overflow-hidden">
+            <iframe 
+              [src]="getHistoricalWindyMapUrl()"
+              width="100%" 
+              height="100%" 
+              frameborder="0"
+              class="rounded-[20px]"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      }
+
+      <!-- Info Grid Row 1 -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Feels Like (for present day) -->
+        @if (historicalWeatherData()!.temperature.feels_like !== undefined) {
+          <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+            <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">FEELS LIKE</p>
+            <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.temperature.feels_like }}°</p>
+            <p class="text-navy-50 font-bold text-sm lowercase mb-2">actual: {{ historicalWeatherData()!.temperature.current }}°</p>
+            <div class="flex items-center gap-2 mb-2">
+              <p class="text-navy-50 font-bold text-sm lowercase">{{ Math.abs((historicalWeatherData()!.temperature.current ?? 0) - (historicalWeatherData()!.temperature.feels_like ?? 0)) }}°</p>
+              <svg class="w-3 h-3" [class.rotate-90]="(historicalWeatherData()!.temperature.feels_like ?? 0) < (historicalWeatherData()!.temperature.current ?? 0)" [class.-rotate-90]="(historicalWeatherData()!.temperature.feels_like ?? 0) > (historicalWeatherData()!.temperature.current ?? 0)" viewBox="0 0 12 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1C7 0.447715 6.55228 0 6 0C5.44772 0 5 0.447715 5 1H6L7 1ZM6 20.7735L11.7735 15L6 9.2265L0.226497 15L6 20.7735ZM6 1H5L5 15H6H7L7 1L6 1Z" fill="#46738B"/>
+              </svg>
+            </div>
+            <div class="h-px bg-gradient-to-r from-navy to-cyan-light/40 mb-2"></div>
+            <p class="text-navy-50 font-bold text-xs lowercase leading-tight">
+              {{ (historicalWeatherData()!.temperature.feels_like ?? 0) < (historicalWeatherData()!.temperature.current ?? 0) ? 'It feels colder than the actual temperature' : 'It feels warmer than the actual temperature' }}
+            </p>
+          </div>
+        } @else {
+          <!-- Wind for historical data -->
+          <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+            <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">WIND</p>
+            <p class="text-navy-50 font-bold text-4xl mb-4" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.wind.speed }}</p>
+            <p class="text-navy-50 font-bold text-sm lowercase">m/s</p>
+            @if (historicalWeatherData()!.wind.direction !== undefined) {
+              <p class="text-navy-50 font-bold text-xs mt-2">{{ historicalWeatherData()!.wind.direction }}°</p>
+            }
+          </div>
+        }
+
+        <!-- Elevation (for present day) or Precipitation (for historical) -->
+        @if (historicalWeatherData()!.type === 'present') {
+          <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+            <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">ELEVATION</p>
+            <p class="text-navy-50 font-bold text-4xl mb-1" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.elevation?.elevation || 'N/A' }}</p>
+            <p class="text-navy-50 font-bold text-sm lowercase mb-2">meter</p>
+            <p class="text-navy-50 font-bold text-sm lowercase leading-tight mb-1">above sea level</p>
+            <p class="text-navy-50 font-bold text-xs uppercase leading-tight">{{ formatCoordinates(historicalWeatherData()!.location.lat, historicalWeatherData()!.location.lon).lat }}<br>{{ formatCoordinates(historicalWeatherData()!.location.lat, historicalWeatherData()!.location.lon).lng }}</p>
+          </div>
+        } @else {
+          <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+            <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">PRECIPITATION</p>
+            <p class="text-navy-50 font-bold text-4xl mb-4" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.precipitation || 0 }} mm</p>
+            <p class="text-navy-50 font-bold text-sm lowercase leading-tight">{{ (historicalWeatherData()!.precipitation ?? 0) > 0 ? 'precipitation recorded' : 'no precipitation' }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- Sunrise and Sunset (for present day) -->
+      @if (historicalWeatherData()!.type === 'present') {
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">SUNRISE AND SUNSET</p>
+          <div class="flex items-center justify-between mb-8">
+            <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">06:30</p>
+          </div>
+          <p class="text-navy-50 font-bold text-sm capitalize absolute bottom-4 right-4" style="letter-spacing: -0.15px;">Sunset: 18:30</p>
+        
+        <!-- Sunset indicator bar -->
+        <div class="relative mt-4">
+          <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_sunset_hist)"/>
+            <defs>
+              <linearGradient id="paint0_linear_sunset_hist" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#26658C"/>
+                <stop offset="0.0865385" stop-color="#C09A00"/>
+                <stop offset="0.370192" stop-color="#FFEA00"/>
+                <stop offset="0.495192" stop-color="#FFF49A"/>
+                <stop offset="0.586538" stop-color="#FFE000"/>
+                <stop offset="0.913462" stop-color="#C09A00"/>
+                <stop offset="1" stop-color="#011C40" stop-opacity="0.88"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <!-- Sun position indicator -->
+          <svg class="absolute -top-2 right-[20px]" style="transform: rotate(-90deg)" width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 0.226498L0.226497 6L6 11.7735L11.7735 6L6 0.226498ZM6 17L7 17L7 6L6 6L5 6L5 17L6 17Z" fill="#CFB005"/>
+          </svg>
+        </div>
+      </div>
+      }
+
+      <!-- UV Index (for present day) -->
+      @if (historicalWeatherData()!.type === 'present') {
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">UV INDEX</p>
+          <div class="mb-6">
+            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.uvi || 1 }}</p>
+            <p class="text-navy-50 font-bold text-2xl lowercase" style="letter-spacing: -0.24px;">low</p>
+          </div>
+          
+          <!-- UV Index gradient bar -->
+          <div class="relative">
+            <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv_hist)"/>
+              <defs>
+                <linearGradient id="paint0_linear_uv_hist" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#268C48"/>
+                  <stop offset="0.0865385" stop-color="#C09A00"/>
+                  <stop offset="0.289568" stop-color="#CF5701"/>
+                  <stop offset="0.495192" stop-color="#D33335"/>
+                  <stop offset="0.732416" stop-color="#D8000B"/>
+                  <stop offset="0.913462" stop-color="#C00087"/>
+                  <stop offset="1" stop-color="#290140" stop-opacity="0.88"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+      }
+
+      <!-- Info Grid Row 2 -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Visibility (for present day) or Wind (for historical) -->
+        @if (historicalWeatherData()!.visibility !== undefined) {
+          <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+            <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">VISIBILITY</p>
+            <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.visibility }} km</p>
+            <p class="text-navy-50 font-bold text-sm lowercase leading-tight">{{ (historicalWeatherData()!.visibility ?? 0) > 10 ? 'Perfectly clear view.' : 'Limited visibility.' }}</p>
+          </div>
+        } @else {
+          <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+            <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">WIND</p>
+            <p class="text-navy-50 font-bold text-4xl mb-4" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.wind.speed }}</p>
+            <p class="text-navy-50 font-bold text-sm lowercase">m/s</p>
+            @if (historicalWeatherData()!.wind.direction !== undefined) {
+              <p class="text-navy-50 font-bold text-xs mt-2">{{ historicalWeatherData()!.wind.direction }}°</p>
+            }
+          </div>
+        }
+
+        <!-- Cloudiness -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">CLOUDINESS</p>
+          <div class="mb-2">
+            <p class="text-navy-50 font-bold text-4xl leading-none" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.cloudiness }}%</p>
+            <p class="text-navy-50 font-bold text-2xl" style="letter-spacing: -0.24px;">CLOUDS</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Grid Row 3 -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <!-- Pressure -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">PRESSURE</p>
+          <p class="text-navy-50 font-bold text-4xl mb-12" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.pressure }}</p>
+          <p class="text-navy-50 font-bold text-sm lowercase text-right">mbar</p>
+        </div>
+
+        <!-- Humidity -->
+        <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4">
+          <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">HUMIDITY</p>
+          <p class="text-navy-50 font-bold text-4xl mb-8" style="letter-spacing: -0.36px;">{{ historicalWeatherData()!.humidity }}%</p>
+          <p class="text-navy-50 font-bold text-sm lowercase leading-tight">{{ historicalWeatherData()!.humidity > 70 ? 'high humidity' : 'moderate humidity' }}</p>
+        </div>
+      </div>
+    }
 
     <!-- Page indicator -->
     <div class="flex justify-center gap-3 mb-4">
-      @for (page of [0, 1, 2]; track page) {
+      @for (page of [0, 1, 2, 3]; track page) {
         <button 
           (click)="goToPage(page)"
           class="w-6 h-6 rounded-full transition-all duration-200"
@@ -498,6 +957,16 @@
             <div class="w-full h-full flex items-center justify-center">
               <div class="w-0.5 h-3 bg-goat-teal"></div>
               <div class="w-3 h-0.5 bg-goat-teal absolute"></div>
+            </div>
+          }
+          @if (page === 3) {
+            <div class="w-full h-full flex items-center justify-center">
+              <svg class="w-3 h-3" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="12" height="11" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                <line x1="2" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="5" y1="1" x2="5" y2="4" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="11" y1="1" x2="11" y2="4" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
             </div>
           }
         </button>
