@@ -256,30 +256,60 @@
       <!-- Sunrise and Sunset -->
       <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
         <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">SUNRISE AND SUNSET</p>
-        <div class="flex items-center justify-between mb-8">
-          <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(weatherData()!.weather.sunrise) }}</p>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(weatherData()!.weather.sunrise) }}</p>
+            <p class="text-navy-50 font-bold text-xs uppercase" style="letter-spacing: -0.11px;">Sunrise</p>
+          </div>
+          <div class="text-right">
+            <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(weatherData()!.weather.sunset) }}</p>
+            <p class="text-navy-50 font-bold text-xs uppercase" style="letter-spacing: -0.11px;">Sunset</p>
+          </div>
         </div>
-        <p class="text-navy-50 font-bold text-sm capitalize absolute bottom-4 right-4" style="letter-spacing: -0.15px;">Sunset: {{ formatTime(weatherData()!.weather.sunset) }}</p>
       
-      <!-- Sunset indicator bar -->
-      <div class="relative mt-4">
-        <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_sunset)"/>
+      <!-- Sun Arc Visualization -->
+      <div class="relative mt-4 h-20">
+        <svg class="w-full h-full" viewBox="0 0 400 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background arc path -->
+          <path 
+            d="M 20 70 Q 200 20 380 70" 
+            stroke="#E5E7EB" 
+            stroke-width="2" 
+            fill="none"
+            stroke-linecap="round"
+            opacity="0.3"
+          />
+          
+          <!-- Sun arc path with gradient -->
+          <path 
+            d="M 20 70 Q 200 20 380 70" 
+            stroke="url(#sunArcGradient)" 
+            stroke-width="4" 
+            fill="none"
+            stroke-linecap="round"
+          />
+          
+          <!-- Sun position indicator -->
+          <circle 
+            [attr.cx]="20 + getSunPosition().progress * 360" 
+            [attr.cy]="70 - Math.sin(getSunPosition().progress * Math.PI) * 25" 
+            r="4" 
+            fill="#FFD700"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            class="drop-shadow-lg"
+          />
+          
+          <!-- Gradient definitions -->
           <defs>
-            <linearGradient id="paint0_linear_sunset" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#26658C"/>
-              <stop offset="0.0865385" stop-color="#C09A00"/>
-              <stop offset="0.370192" stop-color="#FFEA00"/>
-              <stop offset="0.495192" stop-color="#FFF49A"/>
-              <stop offset="0.586538" stop-color="#FFE000"/>
-              <stop offset="0.913462" stop-color="#C09A00"/>
-              <stop offset="1" stop-color="#011C40" stop-opacity="0.88"/>
+            <linearGradient id="sunArcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+              <stop offset="25%" style="stop-color:#60A5FA;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#FBBF24;stop-opacity:1" />
+              <stop offset="75%" style="stop-color:#F59E0B;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#EF4444;stop-opacity:1" />
             </linearGradient>
           </defs>
-        </svg>
-        <!-- Sun position indicator -->
-        <svg class="absolute -top-2 right-[20px]" style="transform: rotate(-90deg)" width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 0.226498L0.226497 6L6 11.7735L11.7735 6L6 0.226498ZM6 17L7 17L7 6L6 6L5 6L5 17L6 17Z" fill="#CFB005"/>
         </svg>
       </div>
     </div>
@@ -456,30 +486,60 @@
       <!-- Sunrise and Sunset for Saved Location -->
       <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
         <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">SUNRISE AND SUNSET</p>
-        <div class="flex items-center justify-between mb-8">
-          <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(savedWeatherData()!.weather.sunrise) }}</p>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(savedWeatherData()!.weather.sunrise) }}</p>
+            <p class="text-navy-50 font-bold text-xs uppercase" style="letter-spacing: -0.11px;">Sunrise</p>
+          </div>
+          <div class="text-right">
+            <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(savedWeatherData()!.weather.sunset) }}</p>
+            <p class="text-navy-50 font-bold text-xs uppercase" style="letter-spacing: -0.11px;">Sunset</p>
+          </div>
         </div>
-        <p class="text-navy-50 font-bold text-sm capitalize absolute bottom-4 right-4" style="letter-spacing: -0.15px;">Sunset: {{ formatTime(savedWeatherData()!.weather.sunset) }}</p>
       
-      <!-- Sunset indicator bar -->
-      <div class="relative mt-4">
-        <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_sunset_saved)"/>
+      <!-- Sun Arc Visualization for Saved Location -->
+      <div class="relative mt-4 h-20">
+        <svg class="w-full h-full" viewBox="0 0 400 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background arc path -->
+          <path 
+            d="M 20 70 Q 200 20 380 70" 
+            stroke="#E5E7EB" 
+            stroke-width="2" 
+            fill="none"
+            stroke-linecap="round"
+            opacity="0.3"
+          />
+          
+          <!-- Sun arc path with gradient -->
+          <path 
+            d="M 20 70 Q 200 20 380 70" 
+            stroke="url(#sunArcGradientSaved)" 
+            stroke-width="4" 
+            fill="none"
+            stroke-linecap="round"
+          />
+          
+          <!-- Sun position indicator -->
+          <circle 
+            [attr.cx]="20 + getSavedSunPosition().progress * 360" 
+            [attr.cy]="70 - Math.sin(getSavedSunPosition().progress * Math.PI) * 25" 
+            r="4" 
+            fill="#FFD700"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            class="drop-shadow-lg"
+          />
+          
+          <!-- Gradient definitions -->
           <defs>
-            <linearGradient id="paint0_linear_sunset_saved" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#26658C"/>
-              <stop offset="0.0865385" stop-color="#C09A00"/>
-              <stop offset="0.370192" stop-color="#FFEA00"/>
-              <stop offset="0.495192" stop-color="#FFF49A"/>
-              <stop offset="0.586538" stop-color="#FFE000"/>
-              <stop offset="0.913462" stop-color="#C09A00"/>
-              <stop offset="1" stop-color="#011C40" stop-opacity="0.88"/>
+            <linearGradient id="sunArcGradientSaved" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+              <stop offset="25%" style="stop-color:#60A5FA;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#FBBF24;stop-opacity:1" />
+              <stop offset="75%" style="stop-color:#F59E0B;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#EF4444;stop-opacity:1" />
             </linearGradient>
           </defs>
-        </svg>
-        <!-- Sun position indicator -->
-        <svg class="absolute -top-2 right-[20px]" style="transform: rotate(-90deg)" width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 0.226498L0.226497 6L6 11.7735L11.7735 6L6 0.226498ZM6 17L7 17L7 6L6 6L5 6L5 17L6 17Z" fill="#CFB005"/>
         </svg>
       </div>
     </div>
@@ -655,30 +715,60 @@
       <!-- Sunrise and Sunset for Search -->
       <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-4 mb-4 relative">
         <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">SUNRISE AND SUNSET</p>
-        <div class="flex items-center justify-between mb-8">
-          <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(searchWeatherData()!.weather.sunrise) }}</p>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(searchWeatherData()!.weather.sunrise) }}</p>
+            <p class="text-navy-50 font-bold text-xs uppercase" style="letter-spacing: -0.11px;">Sunrise</p>
+          </div>
+          <div class="text-right">
+            <p class="text-navy-50 font-bold text-4xl" style="letter-spacing: -0.36px;">{{ formatTime(searchWeatherData()!.weather.sunset) }}</p>
+            <p class="text-navy-50 font-bold text-xs uppercase" style="letter-spacing: -0.11px;">Sunset</p>
+          </div>
         </div>
-        <p class="text-navy-50 font-bold text-sm capitalize absolute bottom-4 right-4" style="letter-spacing: -0.15px;">Sunset: {{ formatTime(searchWeatherData()!.weather.sunset) }}</p>
       
-      <!-- Sunset indicator bar -->
-      <div class="relative mt-4">
-        <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_sunset_search)"/>
+      <!-- Sun Arc Visualization for Search Location -->
+      <div class="relative mt-4 h-20">
+        <svg class="w-full h-full" viewBox="0 0 400 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background arc path -->
+          <path 
+            d="M 20 70 Q 200 20 380 70" 
+            stroke="#E5E7EB" 
+            stroke-width="2" 
+            fill="none"
+            stroke-linecap="round"
+            opacity="0.3"
+          />
+          
+          <!-- Sun arc path with gradient -->
+          <path 
+            d="M 20 70 Q 200 20 380 70" 
+            stroke="url(#sunArcGradientSearch)" 
+            stroke-width="4" 
+            fill="none"
+            stroke-linecap="round"
+          />
+          
+          <!-- Sun position indicator -->
+          <circle 
+            [attr.cx]="20 + getSearchSunPosition().progress * 360" 
+            [attr.cy]="70 - Math.sin(getSearchSunPosition().progress * Math.PI) * 25" 
+            r="4" 
+            fill="#FFD700"
+            stroke="#FFFFFF"
+            stroke-width="2"
+            class="drop-shadow-lg"
+          />
+          
+          <!-- Gradient definitions -->
           <defs>
-            <linearGradient id="paint0_linear_sunset_search" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#26658C"/>
-              <stop offset="0.0865385" stop-color="#C09A00"/>
-              <stop offset="0.370192" stop-color="#FFEA00"/>
-              <stop offset="0.495192" stop-color="#FFF49A"/>
-              <stop offset="0.586538" stop-color="#FFE000"/>
-              <stop offset="0.913462" stop-color="#C09A00"/>
-              <stop offset="1" stop-color="#011C40" stop-opacity="0.88"/>
+            <linearGradient id="sunArcGradientSearch" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+              <stop offset="25%" style="stop-color:#60A5FA;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#FBBF24;stop-opacity:1" />
+              <stop offset="75%" style="stop-color:#F59E0B;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#EF4444;stop-opacity:1" />
             </linearGradient>
           </defs>
-        </svg>
-        <!-- Sun position indicator -->
-        <svg class="absolute -top-2 right-[20px]" style="transform: rotate(-90deg)" width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6 0.226498L0.226497 6L6 11.7735L11.7735 6L6 0.226498ZM6 17L7 17L7 6L6 6L5 6L5 17L6 17Z" fill="#CFB005"/>
         </svg>
       </div>
     </div>
