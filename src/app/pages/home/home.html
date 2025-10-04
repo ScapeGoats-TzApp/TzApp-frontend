@@ -40,8 +40,27 @@
 
     <!-- Page 2: Search -->
     @if (currentPage() === 2) {
+    <!-- Goat mascot and title side by side -->
+    <div class="flex items-start gap-4 mb-[-40px] relative z-10">
+      <!-- Goat mascot -->
+      <div class="w-[114px] h-[171px] mt-[-14px]">
+        <img 
+          src="https://api.builder.io/api/v1/image/assets/TEMP/85335c987e9ae8ac6b1b4c944aca2140d49c0e3a?width=228" 
+          alt="Goat mascot" 
+          class="w-full h-full object-contain"
+        />
+      </div>
+
+      <!-- Title -->
+      <div class="flex-1 flex items-center">
+        <h1 class="text-navy font-bold text-[36px] uppercase leading-[35px]" style="letter-spacing: -2.52px;">
+          search the<br>weather
+        </h1>
+      </div>
+    </div>
+
     <!-- Search Bar -->
-    <div class="pt-4 mb-4">
+    <div class="mb-4 relative z-0">
       <app-search-autocomplete
         placeholder="Search for a city"
         [disabled]="loading()"
@@ -63,7 +82,26 @@
 
     <!-- Page 3: Historical Weather -->
     @if (currentPage() === 3) {
-      <div class="pt-4">
+      <!-- Goat mascot and title side by side -->
+      <div class="flex items-start gap-4 mb-[-40px] relative z-10">
+        <!-- Goat mascot -->
+        <div class="w-[114px] h-[171px] mt-[-14px]">
+          <img 
+            src="https://api.builder.io/api/v1/image/assets/TEMP/85335c987e9ae8ac6b1b4c944aca2140d49c0e3a?width=228" 
+            alt="Goat mascot" 
+            class="w-full h-full object-contain"
+          />
+        </div>
+
+        <!-- Title -->
+        <div class="flex-1 flex items-center">
+          <h1 class="text-navy font-bold text-[36px] uppercase leading-[35px]" style="letter-spacing: -2.52px;">
+            historical<br>weather
+          </h1>
+        </div>
+      </div>
+
+      <div class="relative z-0">
         <!-- Calendar & Location Picker -->
         <div class="mb-4">
           <app-calendar-picker
