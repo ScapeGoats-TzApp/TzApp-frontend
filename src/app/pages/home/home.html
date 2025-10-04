@@ -91,22 +91,24 @@
             <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">Saved Weather</p>
             <div class="space-y-2">
               @for (weather of savedHistoricalWeather(); track weather.id) {
-                <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 relative">
+                <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3">
                   <div class="flex items-center justify-between mb-1">
                     <h3 class="text-navy font-bold text-2xl uppercase" style="letter-spacing: -1.68px;">{{ weather.locationName }}</h3>
                     <p class="text-navy font-bold text-2xl" style="letter-spacing: -1.68px;">{{ getHistoricalWeatherTemperature(weather) }}</p>
                   </div>
                   <p class="text-navy-90 font-bold text-xs capitalize" style="letter-spacing: -0.11px;">{{ formatHistoricalDate(weather.dateObj) }}</p>
-                  <p class="text-navy-90 font-bold text-xs capitalize mt-2" style="letter-spacing: -0.11px;">{{ getHistoricalWeatherDescription(weather) }}</p>
+                  <p class="text-navy-90 font-bold text-xs capitalize mt-2 mb-3" style="letter-spacing: -0.11px;">{{ getHistoricalWeatherDescription(weather) }}</p>
                   
-                  <!-- Remove button -->
-                  <button 
-                    (click)="removeHistoricalWeather(weather.id)"
-                    class="absolute top-2 right-2 w-6 h-6 bg-red-500/20 hover:bg-red-500/30 rounded-full flex items-center justify-center transition-colors">
-                    <svg class="w-3 h-3 text-red-500" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </button>
+                  <!-- Remove button moved to bottom -->
+                  <div class="flex justify-end">
+                    <button 
+                      (click)="removeHistoricalWeather(weather.id)"
+                      class="w-6 h-6 bg-red-500/20 hover:bg-red-500/30 rounded-full flex items-center justify-center transition-colors">
+                      <svg class="w-3 h-3 text-red-500" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               }
             </div>
