@@ -1,0 +1,37 @@
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom colors */
+.text-navy {
+  color: #26658C;
+}
+
+.text-navy-50 {
+  color: rgba(38, 101, 140, 0.5);
+}
+
+.text-navy-70 {
+  color: rgba(38, 101, 140, 0.7);
+}
+
+.text-navy-90 {
+  color: rgba(38, 101, 140, 0.9);
+}
+
+.text-gray-300 {
+  color: rgba(126, 134, 158, 0.7);
+}
+
+.border-cyan {
+  border-color: #54ACBF;
+}
+
+.bg-cyan {
+  background-color: #54ACBF;
+}

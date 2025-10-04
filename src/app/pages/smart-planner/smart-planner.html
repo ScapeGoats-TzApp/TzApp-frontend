@@ -1,0 +1,226 @@
+<div class="min-h-screen pb-24 overflow-x-hidden" style="background: linear-gradient(180deg, #FFF 13.52%, rgba(167, 235, 242, 0.40) 76.72%, rgba(84, 172, 191, 0.68) 87.94%, #26658C 100%);">
+  <div class="max-w-[412px] mx-auto px-[6px] pt-8">
+    <!-- Header with character -->
+    <div class="relative mb-6">
+      <h1 class="text-navy font-bold text-[40px] uppercase leading-[35px] text-right pr-16" style="letter-spacing: -2.8px;">
+        Plan your way!
+      </h1>
+      <img 
+        src="https://api.builder.io/api/v1/image/assets/TEMP/f24033bd8a7b946286620b1ab7ad38b51ff734cd?width=162" 
+        alt="Character" 
+        class="absolute -top-2 right-0 w-[81px] h-[121px]"
+      />
+    </div>
+
+    <!-- Border line -->
+    <div class="w-full h-px border-t border-cyan mb-4"></div>
+
+    <!-- Search Event -->
+    <div class="relative mb-4">
+      <div class="inline-flex items-center bg-white/20 rounded-[20px] border-b border-cyan px-4 py-1.5 gap-2">
+        <input 
+          type="text" 
+          placeholder="search event" 
+          [(ngModel)]="searchQuery"
+          class="bg-transparent text-gray-300 font-bold text-sm placeholder:text-gray-300 placeholder:lowercase focus:outline-none w-[90px]"
+          style="letter-spacing: -1.05px;"
+        />
+        <svg class="w-6 h-5" viewBox="0 0 24 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="10.8196" cy="9.55263" rx="5.90164" ry="5.21053" stroke="#26658C"/>
+          <path d="M10.8195 6.94739C10.432 6.94739 10.0483 7.01477 9.69024 7.1457C9.33223 7.27663 9.00694 7.46853 8.73293 7.71045C8.45892 7.95237 8.24156 8.23957 8.09327 8.55566C7.94498 8.87175 7.86865 9.21052 7.86865 9.55265" stroke="#26658C" stroke-linecap="round"/>
+          <path d="M19.672 17.3684L16.7212 14.7632" stroke="#26658C" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Event Type Chips (Horizontal Scroll) -->
+    <div class="mb-4 overflow-x-auto hide-scrollbar -mx-[6px] px-[6px]">
+      <div class="flex gap-2 min-w-max">
+        @for (event of filteredEvents; track event.id) {
+          <button 
+            (click)="selectEvent(event.id)"
+            class="rounded-[20px] border-b px-4 py-1.5 transition-all"
+            [class.bg-cyan]="selectedEvent() === event.id"
+            [class.border-cyan]="selectedEvent() === event.id"
+            [class.bg-white/20]="selectedEvent() !== event.id"
+            [class.border-cyan]="selectedEvent() !== event.id"
+          >
+            <span 
+              class="font-bold text-sm lowercase whitespace-nowrap" 
+              [class.text-white]="selectedEvent() === event.id"
+              [class.text-gray-300]="selectedEvent() !== event.id"
+              style="letter-spacing: -1.05px;"
+            >{{ event.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Date Picker -->
+    <div class="relative mb-4">
+      <div class="inline-flex items-center gap-2">
+        <input 
+          type="text" 
+          placeholder="mm/yyyy" 
+          [(ngModel)]="monthInput"
+          (change)="onMonthInputChange()"
+          class="bg-white/20 rounded-[20px] border-b border-cyan px-4 py-1.5 text-gray-300 font-bold text-sm placeholder:text-gray-300 placeholder:lowercase focus:outline-none w-[143px]"
+          style="letter-spacing: -1.05px;"
+        />
+        <button class="w-8 h-8 bg-white/20 rounded-[20px] border-r border-cyan flex items-center justify-center">
+          <svg class="w-7 h-7" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="7" width="20" height="5" rx="2" fill="rgba(126, 134, 158, 0.25)"/>
+            <rect x="3" y="7" width="20" height="17" rx="2" stroke="rgba(38, 101, 140, 0.34)" stroke-width="1.2"/>
+            <path d="M8 3L8 7" stroke="rgba(38, 101, 140, 0.34)" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M19 3L19 7" stroke="rgba(38, 101, 140, 0.34)" stroke-width="1.2" stroke-linecap="round"/>
+            <rect x="8" y="14" width="5" height="2" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
+            <rect x="8" y="18" width="5" height="2" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
+            <rect x="15" y="14" width="5" height="2" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
+            <rect x="15" y="18" width="5" height="2" rx="0.5" fill="rgba(38, 101, 140, 0.34)"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- When and Where Heading -->
+    <div class="text-center mb-4">
+      <h2 class="text-navy-90 font-bold text-[32px] uppercase leading-[31px]" style="letter-spacing: -0.32px;">
+        WHEN AND<br>WHERE
+      </h2>
+    </div>
+
+    <!-- Location Input -->
+    <div class="relative mb-6">
+      <app-search-autocomplete
+        placeholder="where?"
+        (placeSelected)="onPlaceSelected($event)"
+      ></app-search-autocomplete>
+    </div>
+
+    @if (selectedLocation()) {
+      <div class="mb-4 text-sm text-navy-70">
+        📍 {{ selectedLocation()!.address }}
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg text-red-700 text-sm">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- Start Button -->
+    <div class="flex justify-end pr-4 mb-6">
+      <button 
+        (click)="startLookin()"
+        [disabled]="loading() || !selectedEvent() || !selectedLocation()"
+        class="relative bg-white/20 rounded-[20px] border-b border-cyan pl-12 pr-4 py-1.5 hover:bg-white/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        @if (loading()) {
+          <div class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8">
+            <svg class="animate-spin h-8 w-8 text-navy" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+        } @else {
+          <img 
+            src="https://api.builder.io/api/v1/image/assets/TEMP/0c452e0618d3318a5b2a6c4e7ea4db6bfa504216?width=64" 
+            alt="Start" 
+            class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8"
+          />
+        }
+        <span class="text-navy-50 font-bold text-xs uppercase leading-tight" style="letter-spacing: -0.11px;">
+          start<br>lookin'
+        </span>
+      </button>
+    </div>
+
+    <!-- Calendar with Results -->
+    @if (showResults()) {
+      <div class="bg-white/30 rounded-[20px] p-4 mb-6 backdrop-blur-sm">
+        <!-- Calendar Header -->
+        <div class="flex items-center justify-between mb-4">
+          <button 
+            (click)="previousMonth()"
+            class="p-2 hover:bg-white/30 rounded-lg transition-colors"
+          >
+            <svg class="w-5 h-5 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <h3 class="text-navy font-bold text-lg">{{ getMonthName() }}</h3>
+          <button 
+            (click)="nextMonth()"
+            class="p-2 hover:bg-white/30 rounded-lg transition-colors"
+          >
+            <svg class="w-5 h-5 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="grid grid-cols-7 gap-1 mb-2">
+          @for (day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track day) {
+            <div class="text-center text-xs font-semibold text-navy-70 py-1">{{ day }}</div>
+          }
+        </div>
+
+        <div class="grid grid-cols-7 gap-1">
+          @for (date of calendarDays(); track date.getTime()) {
+            <div 
+              class="aspect-square relative rounded-lg flex items-center justify-center text-sm transition-all"
+              [class.opacity-30]="!isCurrentMonth(date)"
+              [class.bg-white/50]="isCurrentMonth(date)"
+              [class.bg-cyan]="isTopDay(date) && isCurrentMonth(date)"
+              [class.shadow-md]="isTopDay(date)"
+            >
+              <div class="text-center">
+                <div 
+                  class="font-semibold"
+                  [class.text-white]="isTopDay(date)"
+                  [class.text-navy]="!isTopDay(date)"
+                >
+                  {{ date.getDate() }}
+                </div>
+                @if (isTopDay(date) && isCurrentMonth(date)) {
+                  <div class="text-yellow-300 text-xs leading-none">
+                    ⭐
+                  </div>
+                  <div class="text-white text-[10px] font-bold">
+                    #{{ getDayRank(date) }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Top Days List -->
+        <div class="mt-6">
+          <h4 class="text-navy font-bold text-md mb-3 uppercase" style="letter-spacing: -0.5px;">Top 5 Days:</h4>
+          @for (day of topDays(); track day.dateStr; let i = $index) {
+            <div class="bg-white/50 rounded-lg p-3 mb-2">
+              <div class="flex justify-between items-center mb-1">
+                <div class="font-bold text-navy">
+                  #{{ i + 1 }} - {{ day.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) }}
+                </div>
+                <div class="text-cyan font-bold">Score: {{ day.score }}/100</div>
+              </div>
+              <div class="text-xs text-navy-70 grid grid-cols-2 gap-1">
+                <div>🌡️ Temp: {{ day.temp.toFixed(1) }}°C</div>
+                <div>💧 Humidity: {{ day.humidity }}%</div>
+                <div>🌧️ Precip: {{ day.precip.toFixed(1) }}mm</div>
+                <div>☁️ Clouds: {{ day.clouds }}%</div>
+                <div>💨 Wind: {{ day.wind.toFixed(1) }}m/s</div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <app-navigation></app-navigation>
+</div>

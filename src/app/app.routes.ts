@@ -4,12 +4,14 @@ import { HomePage } from './pages/home/home';
 import { ExplorePage } from './pages/explore/explore';
 import { SavedComponent } from './pages/saved/saved';
 import { LocationComponent } from './pages/location/location';
+import { SmartPlanner } from './pages/smart-planner/smart-planner';
 
 export const routes: Routes = [
   { path: '', component: LoadingComponent },
   { path: 'home', component: HomePage },
-  { path: 'explore', component: ExplorePage },
-  { path: 'saved', component: SavedComponent },
-  { path: 'location/:id', component: LocationComponent },
+  { path: 'smart-planner', component: SmartPlanner },
+  // { path: 'explore', component: ExplorePage },
+  // { path: 'saved', component: SavedComponent },
+  // { path: 'location/:id', component: LocationComponent },
   { path: '**', redirectTo: '' }
 ];

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, forkJoin } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { WeatherService, WeatherResponse } from './weather.service';
@@ -184,6 +184,26 @@ export class OneCallService {
     return this.http.get<DailySummaryResponse>(url, { params }).pipe(
       catchError(this.handleError)
     );
+  }
+
+  /**
+   * Get daily summaries for an entire month
+   * @param lat Latitude
+   * @param lon Longitude
+   * @param month Month (1-12)
+   * @param year Year
+   * @returns Observable of array of daily summary responses
+   */
+  getMonthData(lat: number, lon: number, month: number, year: number): Observable<DailySummaryResponse[]> {
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const requests: Observable<DailySummaryResponse>[] = [];
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month - 1, day);
+      requests.push(this.getDaySummary(lat, lon, date));
+    }
+
+    return forkJoin(requests);
   }
 
 
