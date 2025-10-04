@@ -22,12 +22,22 @@ export class MyProfile implements OnInit {
   reviewText = signal('');
   isSendingReview = signal(false);
   reviewSent = signal(false);
+  
+  // Theme functionality
+  isDarkTheme = signal(false);
 
   ngOnInit(): void {
     // Load user name from local storage on component initialization
     const savedName = localStorage.getItem('tzapp-user-name');
     if (savedName) {
       this.userName.set(savedName);
+    }
+    
+    // Load theme preference from local storage
+    const savedTheme = localStorage.getItem('tzapp-theme');
+    if (savedTheme) {
+      this.isDarkTheme.set(savedTheme === 'dark');
+      this.applyTheme(savedTheme === 'dark');
     }
   }
 
@@ -102,5 +112,28 @@ export class MyProfile implements OnInit {
   onReviewTextChange(event: Event): void {
     const target = event.target as HTMLTextAreaElement;
     this.reviewText.set(target.value);
+  }
+
+  // Theme functionality
+  toggleTheme(): void {
+    const newTheme = !this.isDarkTheme();
+    this.isDarkTheme.set(newTheme);
+    
+    // Save to local storage
+    localStorage.setItem('tzapp-theme', newTheme ? 'dark' : 'light');
+    
+    // Apply theme to the document
+    this.applyTheme(newTheme);
+  }
+
+  private applyTheme(isDark: boolean): void {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.add('dark-theme');
+      root.classList.remove('light-theme');
+    } else {
+      root.classList.add('light-theme');
+      root.classList.remove('dark-theme');
+    }
   }
 }

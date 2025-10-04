@@ -63,17 +63,20 @@
     </div>
 
     <!-- Theme Toggle -->
-    <div class="flex items-center justify-center gap-8 mb-4">
-      <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">THEME</span>
-      <button class="relative w-[77px] h-7 rounded-full border-2 border-navy bg-transparent">
-        <div class="absolute left-1 top-0.5 w-6 h-6 rounded-full border-3 border-cyan bg-white"></div>
-      </button>
-    </div>
+      <div class="flex items-center justify-center gap-8 mb-4">
+        <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">THEME</span>
+        <div class="relative">
+          <input type="checkbox" id="dark-mode-toggle" [checked]="isDarkTheme()" (change)="toggleTheme()" class="sr-only">
+            <label for="dark-mode-toggle" class="toggle" style="display: inline-block; width: 60px; height: 30px; background: #adbcdb; border-radius: 30px; position: relative; cursor: pointer; border: 2px solid #1e2223;">
+              <span style="position: absolute; top: 3px; left: 5px; width: 20px; height: 20px; background: #ffffff; border-radius: 50%; transition: transform 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+            </label>
+        </div>
+      </div>
 
     <!-- Terms and Conditions -->
     <button 
       (click)="openTermsPopup()"
-      class="w-full bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 mb-4 flex items-center justify-between hover:bg-cyan-light/30 transition-colors"
+      class="w-full bg-cyan-light/20 rounded-[30px] border-b border-cyan p-5 mb-4 flex items-center justify-between hover:bg-cyan-light/30 transition-colors"
     >
       <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">TERMS AND CONDITIONS</span>
       <svg class="w-3 h-4" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
