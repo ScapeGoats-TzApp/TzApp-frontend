@@ -31,6 +31,7 @@ export interface WeatherData {
   cloudiness: number;
   windDirection: number;
   windGust?: number;
+  uvi?: number;
   
   // Atmospheric data
   seaLevelPressure?: number;

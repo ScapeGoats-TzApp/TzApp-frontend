@@ -3,11 +3,29 @@
 @tailwind utilities;
 
 @layer base {
-  body {
+  html, body {
     font-family: 'Montserrat', -apple-system, Roboto, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    height: 100%;
+  }
+  
+  body {
+    position: relative;
+  }
+  
+  /* Sticky gradient background using existing gradient */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #FFF 13.52%, rgba(167, 235, 242, 0.40) 76.72%, rgba(84, 172, 191, 0.68) 87.94%, #26658C 100%);
+    z-index: -1;
+    pointer-events: none;
   }
   
   * {

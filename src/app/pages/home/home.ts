@@ -589,4 +589,160 @@ export class HomePage implements OnInit {
       year: 'numeric'
     });
   }
+
+  // Calculate sun position for the arc visualization
+  getSunPosition(): { x: number; y: number; progress: number } {
+    const now = new Date();
+    const currentTime = now.getTime() / 1000; // Current time in seconds
+    
+    // Get sunrise and sunset times from weather data
+    const weatherData = this.weatherData();
+    if (!weatherData) {
+      return { x: 50, y: 50, progress: 0.5 }; // Default position
+    }
+    
+    const sunrise = weatherData.weather.sunrise;
+    const sunset = weatherData.weather.sunset;
+    
+    // If current time is before sunrise, show position at start
+    if (currentTime < sunrise) {
+      return { x: 10, y: 90, progress: 0 };
+    }
+    
+    // If current time is after sunset, show position at end
+    if (currentTime > sunset) {
+      return { x: 90, y: 90, progress: 1 };
+    }
+    
+    // Calculate progress between sunrise and sunset (0 to 1)
+    const dayDuration = sunset - sunrise;
+    const elapsed = currentTime - sunrise;
+    const progress = elapsed / dayDuration;
+    
+    // Calculate position on the arc
+    // X position: linear from left to right
+    const x = 10 + (progress * 80);
+    
+    // Y position: follows a sine curve (higher in middle, lower at ends)
+    const y = 90 - (Math.sin(progress * Math.PI) * 30);
+    
+    return { x, y, progress };
+  }
+
+  // Get sun position for saved location
+  getSavedSunPosition(): { x: number; y: number; progress: number } {
+    const now = new Date();
+    const currentTime = now.getTime() / 1000;
+    
+    const savedWeatherData = this.savedWeatherData();
+    if (!savedWeatherData) {
+      return { x: 50, y: 50, progress: 0.5 };
+    }
+    
+    const sunrise = savedWeatherData.weather.sunrise;
+    const sunset = savedWeatherData.weather.sunset;
+    
+    if (currentTime < sunrise) {
+      return { x: 10, y: 90, progress: 0 };
+    }
+    
+    if (currentTime > sunset) {
+      return { x: 90, y: 90, progress: 1 };
+    }
+    
+    const dayDuration = sunset - sunrise;
+    const elapsed = currentTime - sunrise;
+    const progress = elapsed / dayDuration;
+    
+    const x = 10 + (progress * 80);
+    const y = 90 - (Math.sin(progress * Math.PI) * 30);
+    
+    return { x, y, progress };
+  }
+
+  // Get sun position for search location
+  getSearchSunPosition(): { x: number; y: number; progress: number } {
+    const now = new Date();
+    const currentTime = now.getTime() / 1000;
+    
+    const searchWeatherData = this.searchWeatherData();
+    if (!searchWeatherData) {
+      return { x: 50, y: 50, progress: 0.5 };
+    }
+    
+    const sunrise = searchWeatherData.weather.sunrise;
+    const sunset = searchWeatherData.weather.sunset;
+    
+    if (currentTime < sunrise) {
+      return { x: 10, y: 90, progress: 0 };
+    }
+    
+    if (currentTime > sunset) {
+      return { x: 90, y: 90, progress: 1 };
+    }
+    
+    const dayDuration = sunset - sunrise;
+    const elapsed = currentTime - sunrise;
+    const progress = elapsed / dayDuration;
+    
+    const x = 10 + (progress * 80);
+    const y = 90 - (Math.sin(progress * Math.PI) * 30);
+    
+    return { x, y, progress };
+  }
+
+  // Get UV index value
+  getUVIndex(): number {
+    const weatherData = this.weatherData();
+    return weatherData?.weather.uvi || 1; // Default to 1 if no UV data
+  }
+
+  // Get UV index for saved location
+  getSavedUVIndex(): number {
+    const savedWeatherData = this.savedWeatherData();
+    return savedWeatherData?.weather.uvi || 1;
+  }
+
+  // Get UV index for search location
+  getSearchUVIndex(): number {
+    const searchWeatherData = this.searchWeatherData();
+    return searchWeatherData?.weather.uvi || 1;
+  }
+
+  // Get UV index description
+  getUVDescription(uvIndex: number): string {
+    if (uvIndex <= 2) return 'low';
+    if (uvIndex <= 5) return 'moderate';
+    if (uvIndex <= 7) return 'high';
+    if (uvIndex <= 10) return 'very high';
+    return 'extreme';
+  }
+
+  // Calculate UV indicator position (0-100%)
+  getUVPosition(uvIndex: number): number {
+    // UV index typically ranges from 0-11+, but we'll cap at 11 for display
+    const maxUV = 11;
+    const clampedUV = Math.min(uvIndex, maxUV);
+    return (clampedUV / maxUV) * 100;
+  }
+
+  // Get cloudiness percentage with fallback
+  getCloudiness(): number {
+    const weatherData = this.weatherData();
+    console.log('Weather data:', weatherData);
+    console.log('Cloudiness value:', weatherData?.weather.cloudiness);
+    return weatherData?.weather.cloudiness || 0;
+  }
+
+  // Get cloudiness for saved location
+  getSavedCloudiness(): number {
+    const savedWeatherData = this.savedWeatherData();
+    return savedWeatherData?.weather.cloudiness || 0;
+  }
+
+  // Get cloudiness for search location
+  getSearchCloudiness(): number {
+    const searchWeatherData = this.searchWeatherData();
+    return searchWeatherData?.weather.cloudiness || 0;
+  }
 }
