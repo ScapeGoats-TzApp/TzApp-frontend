@@ -1,0 +1,111 @@
+/* Home Page Styles */
+
+.bg-gradient-main {
+  background: linear-gradient(
+    180deg,
+    #ffffff 13.52%,
+    rgba(167, 235, 242, 0.4) 76.72%,
+    rgba(84, 172, 191, 0.68) 87.94%,
+    #26658c 100%
+  );
+}
+
+.text-navy {
+  color: #011c40;
+}
+
+.text-navy-50 {
+  color: rgba(1, 28, 64, 0.5);
+}
+
+.text-navy-90 {
+  color: rgba(1, 28, 64, 0.9);
+}
+
+.bg-cyan-light {
+  background-color: rgba(167, 235, 242, 0.2);
+}
+
+.border-cyan {
+  border-color: rgba(167, 235, 242, 0.5);
+}
+
+.bg-goat-blue {
+  background-color: #26658c;
+}
+
+.text-goat-sky {
+  color: #5193DE;
+}
+
+/* Custom letter spacing */
+.tracking-tight {
+  letter-spacing: -1.05px;
+}
+
+.title-spacing {
+  letter-spacing: -2.52px;
+}
+
+.forecast-spacing {
+  letter-spacing: -0.11px;
+}
+
+.temp-spacing {
+  letter-spacing: -1.68px;
+}
+
+.feels-like-spacing {
+  letter-spacing: -0.36px;
+}
+
+/* Weather card styles */
+.weather-card {
+  background: rgba(167, 235, 242, 0.2);
+  border-bottom: 1px solid rgba(167, 235, 242, 0.5);
+}
+
+/* Forecast row styles */
+.forecast-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.forecast-row:last-child {
+  border-bottom: none;
+}
+
+/* Info grid styles */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Page indicator styles */
+.page-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.indicator-dot {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+}
+
+.indicator-dot.active {
+  background-color: rgba(38, 101, 140, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.indicator-dot.inactive {
+  background-color: #d1d5db;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .max-w-412 {
+    max-width: 412px;
+  }
+}

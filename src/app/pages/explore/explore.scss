@@ -1,0 +1,41 @@
+/* Explore Page Styles */
+
+.bg-gradient-main {
+  background: linear-gradient(
+    180deg,
+    #ffffff 13.52%,
+    rgba(167, 235, 242, 0.4) 76.72%,
+    rgba(84, 172, 191, 0.68) 87.94%,
+    #26658c 100%
+  );
+}
+
+.text-navy {
+  color: #011c40;
+}
+
+.text-navy-90 {
+  color: rgba(1, 28, 64, 0.9);
+}
+
+.bg-cyan-light {
+  background-color: rgba(167, 235, 242, 0.2);
+}
+
+.border-cyan {
+  border-color: rgba(167, 235, 242, 0.5);
+}
+
+.bg-goat-blue {
+  background-color: #26658c;
+}
+
+/* Custom letter spacing for title */
+.explore-title {
+  letter-spacing: -2.52px;
+}
+
+/* Custom letter spacing for search input */
+.search-input {
+  letter-spacing: -1.05px;
+}

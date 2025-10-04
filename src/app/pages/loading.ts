@@ -1,0 +1,48 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-loading',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="min-h-screen bg-gradient-main flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <!-- Goat mascot -->
+      <div class="w-[250px] h-[250px] mb-8 relative">
+        <img 
+          src="https://api.builder.io/api/v1/image/assets/TEMP/ba9f7d67248554e5479eb4ce837c2552328cd99d?width=514" 
+          alt="Goat mascot" 
+          class="w-full h-auto"
+        />
+      </div>
+
+      <!-- Hi user text -->
+      <h1 class="text-white text-center font-bold text-4xl mb-12" style="text-shadow: 0 2px 7px #011C40; letter-spacing: -2.52px;">
+        Hi user!
+      </h1>
+
+      <!-- Loading dots -->
+      <div class="flex gap-3 mb-24">
+        <div class="w-2 h-12 rounded-full bg-navy"></div>
+        <div class="w-2 h-12 rounded-full bg-navy"></div>
+        <div class="w-2 h-12 rounded-full bg-navy"></div>
+      </div>
+
+      <!-- Bottom text -->
+      <div class="absolute bottom-8 text-center">
+        <p class="text-white/80 font-bold text-xl">Scape Goats</p>
+        <p class="text-white/80 font-bold text-sm">Nasa SpaceApps</p>
+      </div>
+    </div>
+  `
+})
+export class LoadingPage implements OnInit {
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    setTimeout(() => {
+      this.router.navigate(['/home']);
+    }, 2000);
+  }
+}

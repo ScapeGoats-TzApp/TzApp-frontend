@@ -1,0 +1,132 @@
+/* Navigation Component Styles */
+
+// Color variables
+$cyan-color: rgba(167, 235, 242, 0.5);
+$cyan-light: rgba(167, 235, 242, 0.2);
+$cyan-border: rgba(167, 235, 242, 0.3);
+$cyan-bg: rgba(167, 235, 242, 0.3);
+$cyan-button-bg: rgba(167, 235, 242, 0.05);
+$navy-shadow: #26658C;
+
+// Utility classes
+.border-cyan {
+  border-color: $cyan-color;
+}
+
+.bg-cyan-light {
+  background-color: $cyan-light;
+}
+
+.border-cyan-border {
+  border-color: $cyan-border;
+}
+
+// Navigation container styles
+.navigation-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 0 6px 8px 6px;
+  z-index: 50;
+}
+
+.navigation-bar {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  height: 85px;
+  border-radius: 20px;
+  border-right: 1px solid $cyan-color;
+  opacity: 0.82;
+  background-color: $cyan-bg;
+  box-shadow: 0 3px 3px 0 $navy-shadow;
+}
+
+.navigation-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  padding: 4px 8px;
+}
+
+// Navigation item styles
+.nav-item {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.nav-button {
+  border-radius: 20px;
+  border-right: 1px solid $cyan-border;
+  opacity: 0.82;
+  background-color: $cyan-button-bg;
+  box-shadow: 0 3px 3px 0 $navy-shadow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Button size variants
+  &.home {
+    width: 73px;
+    height: 73px;
+  }
+
+  &.saved {
+    width: 74px;
+    height: 73px;
+  }
+
+  &.explore {
+    width: 74px;
+    height: 73px;
+  }
+
+  &.profile {
+    width: 73px;
+    height: 73px;
+  }
+}
+
+// SVG icon styles
+.nav-icon {
+  opacity: 0.65;
+
+  &.explore {
+    opacity: 1;
+  }
+}
+
+// Active navigation state
+.active-nav {
+  .nav-button {
+    opacity: 1 !important;
+  }
+
+  .nav-icon {
+    opacity: 1 !important;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .navigation-bar {
+    max-width: 100%;
+  }
+  
+  .nav-button {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .nav-icon {
+    width: 50px;
+    height: 50px;
+  }
+}

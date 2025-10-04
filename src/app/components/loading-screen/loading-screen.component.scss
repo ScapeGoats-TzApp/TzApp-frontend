@@ -1,0 +1,39 @@
+/* Loading Screen Component Styles */
+.loading-screen {
+  background: linear-gradient(
+    180deg,
+    #ffffff 13.52%,
+    rgba(167, 235, 242, 0.4) 76.72%,
+    rgba(84, 172, 191, 0.68) 87.94%,
+    #26658c 100%
+  );
+}
+
+.greeting-text {
+  text-shadow: 0 2px 7px #011c40;
+}
+
+.loading-dots .dot {
+  animation: pulse-height 1.4s ease-in-out infinite;
+}
+
+.loading-dots .dot.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.loading-dots .dot.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse-height {
+  0%, 100% {
+    height: 3rem;
+  }
+  50% {
+    height: 1.5rem;
+  }
+}
+
+.bg-navy {
+  background-color: #011c40;
+}
