@@ -1,14 +1,106 @@
-import { Component } from '@angular/core';
+import { Component, signal, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { NavigationComponent } from '../../components/navigation';
 
 @Component({
   selector: 'app-my-profile',
   standalone: true,
-  imports: [CommonModule, NavigationComponent],
+  imports: [CommonModule, FormsModule, NavigationComponent],
   templateUrl: './my-profile.html',
   styleUrl: './my-profile.scss'
 })
-export class MyProfile {
+export class MyProfile implements OnInit {
+  @ViewChild('nameInput', { static: false }) nameInput!: ElementRef<HTMLInputElement>;
+  
+  showTermsPopup = signal(false);
+  isEditingName = signal(false);
+  userName = signal('Tzapul');
+  tempUserName = signal('');
+  
+  // Review functionality
+  reviewText = signal('');
+  isSendingReview = signal(false);
+  reviewSent = signal(false);
 
+  ngOnInit(): void {
+    // Load user name from local storage on component initialization
+    const savedName = localStorage.getItem('tzapp-user-name');
+    if (savedName) {
+      this.userName.set(savedName);
+    }
+  }
+
+  openTermsPopup(): void {
+    this.showTermsPopup.set(true);
+  }
+
+  closeTermsPopup(): void {
+    this.showTermsPopup.set(false);
+  }
+
+  startEditingName(): void {
+    this.tempUserName.set(this.userName());
+    this.isEditingName.set(true);
+    // Focus the input field after the view updates
+    setTimeout(() => {
+      if (this.nameInput) {
+        this.nameInput.nativeElement.focus();
+        this.nameInput.nativeElement.select();
+      }
+    }, 0);
+  }
+
+  saveUserName(): void {
+    const newName = this.tempUserName().trim();
+    if (newName) {
+      this.userName.set(newName);
+      // Save to local storage
+      localStorage.setItem('tzapp-user-name', newName);
+    }
+    this.isEditingName.set(false);
+  }
+
+  cancelEditingName(): void {
+    this.tempUserName.set(this.userName());
+    this.isEditingName.set(false);
+  }
+
+  // Review functionality
+  sendReview(): void {
+    const text = this.reviewText().trim();
+    if (!text) {
+      alert('Please enter your review before sending.');
+      return;
+    }
+
+    this.isSendingReview.set(true);
+    
+    // Create email content
+    const subject = `TzApp Review from ${this.userName()}`;
+    const body = `Review from: ${this.userName()}\n\nReview:\n${text}`;
+    
+    // Create mailto link
+    const mailtoLink = `mailto:s.hoarders@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    // Simulate sending (in a real app, you'd use a backend service)
+    setTimeout(() => {
+      this.isSendingReview.set(false);
+      this.reviewSent.set(true);
+      this.reviewText.set('');
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        this.reviewSent.set(false);
+      }, 3000);
+    }, 1000);
+  }
+
+  onReviewTextChange(event: Event): void {
+    const target = event.target as HTMLTextAreaElement;
+    this.reviewText.set(target.value);
+  }
 }

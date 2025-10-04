@@ -7,23 +7,59 @@
         <img 
           src="https://api.builder.io/api/v1/image/assets/TEMP/70d690321e018ce2d4950ed60a712bea69803968?width=381" 
           alt="Profile" 
-          class="w-[190px] h-[285px] object-contain absolute -top-7 left-0"
+          class="avatar-image"
         />
       </div>
     </div>
 
     <!-- Profile Name -->
     <div class="flex items-center justify-center gap-2 mb-6">
-      <h1 class="text-white font-bold text-4xl capitalize text-center" style="text-shadow: 0 2px 7px #011C40; letter-spacing: 0px;">
-        AmpuLaMare
-      </h1>
-      <button class="w-8 h-8 flex items-center justify-center">
-        <img 
-          src="https://api.builder.io/api/v1/image/assets/TEMP/64f0c9b624f366871a36a5b9bae1ede42bf8d9f4?width=66" 
-          alt="Edit" 
-          class="w-8 h-8"
-        />
-      </button>
+      @if (!isEditingName()) {
+        <h1 class="text-white font-bold text-4xl capitalize text-center" style="text-shadow: 0 2px 7px #011C40; letter-spacing: 0px;">
+          {{ userName() }}
+        </h1>
+        <button 
+          (click)="startEditingName()"
+          class="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded-lg transition-colors"
+        >
+          <img 
+            src="https://api.builder.io/api/v1/image/assets/TEMP/64f0c9b624f366871a36a5b9bae1ede42bf8d9f4?width=66" 
+            alt="Edit" 
+            class="w-8 h-8"
+          />
+        </button>
+      } @else {
+        <div class="flex items-center gap-2">
+          <input 
+            type="text" 
+            [(ngModel)]="tempUserName"
+            class="text-white font-bold text-4xl capitalize text-center bg-transparent border-b-2 border-white/50 focus:border-white focus:outline-none px-2 py-1"
+            style="text-shadow: 0 2px 7px #011C40; letter-spacing: 0px; min-width: 200px;"
+            placeholder="Enter name"
+            (keydown.enter)="saveUserName()"
+            (keydown.escape)="cancelEditingName()"
+            #nameInput
+          />
+          <button 
+            (click)="saveUserName()"
+            class="w-8 h-8 flex items-center justify-center bg-green-500/80 hover:bg-green-500 rounded-lg transition-colors"
+            title="Save"
+          >
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </button>
+          <button 
+            (click)="cancelEditingName()"
+            class="w-8 h-8 flex items-center justify-center bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors"
+            title="Cancel"
+          >
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      }
     </div>
 
     <!-- Theme Toggle -->
@@ -35,7 +71,10 @@
     </div>
 
     <!-- Terms and Conditions -->
-    <button class="w-full bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 mb-4 flex items-center justify-between hover:bg-cyan-light/30 transition-colors">
+    <button 
+      (click)="openTermsPopup()"
+      class="w-full bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3 mb-4 flex items-center justify-between hover:bg-cyan-light/30 transition-colors"
+    >
       <span class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">TERMS AND CONDITIONS</span>
       <svg class="w-3 h-4" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12.7071 8.70711C13.0976 8.31658 13.0976 7.68342 12.7071 7.29289L6.34315 0.928932C5.95262 0.538408 5.31946 0.538408 4.92893 0.928932C4.53841 1.31946 4.53841 1.95262 4.92893 2.34315L10.5858 8L4.92893 13.6569C4.53841 14.0474 4.53841 14.6805 4.92893 15.0711C5.31946 15.4616 5.95262 15.4616 6.34315 15.0711L12.7071 8.70711ZM0 8V9H12V8V7H0V8Z" fill="#163252"/>
@@ -57,6 +96,8 @@
 
         <!-- Text Area -->
         <textarea 
+          [value]="reviewText()"
+          (input)="onReviewTextChange($event)"
           placeholder="type here......" 
           class="w-full h-[200px] bg-transparent text-navy-50 font-bold text-xs placeholder:text-navy-50 placeholder:uppercase focus:outline-none resize-none"
           style="letter-spacing: -0.11px; line-height: 10px;"
@@ -65,20 +106,151 @@
 
       <!-- Send Button -->
       <div class="flex justify-center">
-        <button class="bg-white/20 rounded-[20px] border-b border-cyan px-6 py-2 flex items-center gap-2 hover:bg-white/30 transition-colors">
-          <img 
-            src="https://api.builder.io/api/v1/image/assets/TEMP/bc97444f011c4f2b7f56e02bc04bdbf5c2588b27?width=48" 
-            alt="Send" 
-            class="w-6 h-6"
-          />
-          <span class="text-navy-50 font-bold text-base uppercase" style="letter-spacing: -0.16px; line-height: 10px;">
-            SEND
-          </span>
-        </button>
+        @if (reviewSent()) {
+          <div class="bg-green-500/20 rounded-[20px] border-b border-green-500 px-6 py-2 flex items-center gap-2">
+            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span class="text-green-500 font-bold text-base uppercase" style="letter-spacing: -0.16px; line-height: 10px;">
+              SENT!
+            </span>
+          </div>
+        } @else {
+          <button 
+            (click)="sendReview()"
+            [disabled]="isSendingReview() || !reviewText().trim()"
+            class="bg-white/20 rounded-[20px] border-b border-cyan px-6 py-2 flex items-center gap-2 hover:bg-white/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            @if (isSendingReview()) {
+              <div class="w-6 h-6">
+                <svg class="animate-spin h-6 w-6 text-navy-50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+            } @else {
+              <img 
+                src="https://api.builder.io/api/v1/image/assets/TEMP/bc97444f011c4f2b7f56e02bc04bdbf5c2588b27?width=48" 
+                alt="Send" 
+                class="w-6 h-6"
+              />
+            }
+            <span class="text-navy-50 font-bold text-base uppercase" style="letter-spacing: -0.16px; line-height: 10px;">
+              @if (isSendingReview()) {
+                SENDING...
+              } @else {
+                SEND
+              }
+            </span>
+          </button>
+        }
       </div>
     </div>
 
   </div>
+
+  <!-- Terms and Conditions Popup -->
+  @if (showTermsPopup()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeTermsPopup()"></div>
+      
+      <!-- Popup Content -->
+      <div class="relative bg-white/95 backdrop-blur-sm rounded-[20px] border border-cyan shadow-2xl max-w-[90vw] max-h-[90vh] overflow-hidden">
+        <!-- Header -->
+        <div class="bg-cyan-light/20 border-b border-cyan p-4 flex items-center justify-between">
+          <h2 class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">
+            TERMS AND CONDITIONS
+          </h2>
+          <button 
+            (click)="closeTermsPopup()"
+            class="w-8 h-8 flex items-center justify-center hover:bg-white/30 rounded-lg transition-colors"
+          >
+            <svg class="w-6 h-6 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Content -->
+        <div class="p-6 overflow-y-auto max-h-[70vh]">
+          <div class="space-y-4 text-navy-70">
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">1. Acceptance of Terms</h3>
+              <p class="text-sm leading-relaxed">By accessing and using TzApp, you agree to these Terms and Conditions. If you do not agree, you are not authorized to use the application.</p>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">2. Service Overview</h3>
+              <p class="text-sm leading-relaxed mb-2">TzApp offers the following features:</p>
+              <ul class="text-sm leading-relaxed ml-4 space-y-1">
+                <li>• <strong>Weather Prediction Chatbot:</strong> Provides personalized weather forecasts for events, vacations, and flights, using real-time data to offer location-specific recommendations.</li>
+                <li>• <strong>Smart Planner:</strong> Assists in event planning by suggesting optimal times based on weather forecasts and calendar data.</li>
+                <li>• <strong>Saved Locations:</strong> Users can save locations for easy access to detailed weather forecasts, which are stored locally on their devices.</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">3. Application Usage</h3>
+              <p class="text-sm leading-relaxed mb-2">TzApp is for personal, non-commercial use only, including:</p>
+              <ul class="text-sm leading-relaxed ml-4 space-y-1">
+                <li>• Viewing weather forecasts</li>
+                <li>• Interacting with the chatbot for personalized recommendations</li>
+                <li>• Saving and viewing preferred locations</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">4. Privacy and Data Protection</h3>
+              <p class="text-sm leading-relaxed">By using TzApp, you consent to our Privacy Policy, which details how we collect and protect personal data. We may collect information like location and user preferences to improve services. We do not sell or distribute personal data without explicit consent, unless required by law.</p>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">5. Limitation of Liability</h3>
+              <p class="text-sm leading-relaxed">While we use reliable weather data, forecasts are estimates and not guaranteed. Users are responsible for not making critical decisions solely based on TzApp forecasts. We are not liable for any damages resulting from app usage.</p>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">6. Chatbot Functionality</h3>
+              <p class="text-sm leading-relaxed">The chatbot provides event and vacation recommendations based on weather forecasts but does not replace expert consultation in extreme conditions. TzApp is not liable for decisions based on chatbot advice.</p>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">7. Modifications to Terms</h3>
+              <p class="text-sm leading-relaxed">We may update these Terms at any time. Changes will be published within the app, and users will be notified. Continued use constitutes acceptance of the new terms.</p>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">8. Governing Law</h3>
+              <p class="text-sm leading-relaxed">These Terms are governed by Romanian law. Any disputes will be resolved under Romanian legislation.</p>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">9. Dispute Resolution</h3>
+              <p class="text-sm leading-relaxed">In case of a dispute, please contact TzApp for resolution. If unresolved, the matter will be handled under Romanian law.</p>
+            </div>
+            
+            <div>
+              <h3 class="text-navy-90 font-bold text-lg mb-2">10. Contact Us</h3>
+              <p class="text-sm leading-relaxed">For questions about these Terms, please contact us at:</p>
+              <p class="text-sm leading-relaxed mt-1"><strong>Phone:</strong> 0775336202</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-cyan-light/10 border-t border-cyan p-4 flex justify-center">
+          <button 
+            (click)="closeTermsPopup()"
+            class="bg-cyan-light/20 rounded-[20px] border-b border-cyan px-6 py-2 text-navy-90 font-bold text-base uppercase hover:bg-cyan-light/30 transition-colors"
+            style="letter-spacing: -0.16px;"
+          >
+            CLOSE
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <app-navigation></app-navigation>
 </div>
