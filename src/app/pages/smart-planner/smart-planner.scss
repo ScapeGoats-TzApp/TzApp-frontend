@@ -35,3 +35,60 @@
 .bg-cyan {
   background-color: #54ACBF;
 }
+
+/* Mobile responsiveness */
+@media (max-width: 1024px) {
+  /* Adjust container max width on mobile/tablet */
+  .max-w-\[800px\] {
+    max-width: 100%;
+  }
+
+  /* Smaller headings on mobile */
+  h1 {
+    font-size: 32px !important;
+    line-height: 34px !important;
+  }
+}
+
+/* Specific mobile layout */
+@media (max-width: 640px) {
+  /* Make event chips smaller on mobile */
+  .overflow-x-auto button {
+    font-size: 11px !important;
+    padding: 5px 10px !important;
+  }
+
+  /* Adjust input widths for mobile */
+  input[placeholder="mm/yyyy"] {
+    width: 110px !important;
+    font-size: 13px !important;
+  }
+
+  /* Make location input smaller on mobile */
+  .max-w-\[200px\] {
+    max-width: 160px !important;
+  }
+
+  /* Reduce heading size further on mobile */
+  h2 {
+    font-size: 24px !important;
+    line-height: 22px !important;
+  }
+  
+  /* Make calendar button smaller */
+  .w-10.h-10 {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+}
+
+/* Small mobile screens - stack inputs vertically */
+@media (max-width: 480px) {
+  .flex-col.sm\:flex-row {
+    flex-direction: column !important;
+  }
+  
+  .max-w-\[200px\] {
+    max-width: 100% !important;
+  }
+}
