@@ -41,7 +41,7 @@
     <!-- Page 2: Search -->
     @if (currentPage() === 2) {
     <!-- Goat mascot and title side by side -->
-    <div class="flex items-start gap-4 mb-[-40px] relative z-10">
+    <div class="flex items-start gap-4 mb-[-40px] relative z-0">
       <!-- Goat mascot -->
       <div class="w-[114px] h-[171px] mt-[-14px]">
         <img 
@@ -60,7 +60,7 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="mb-4 relative z-0">
+    <div class="mb-4 relative z-10">
       <app-search-autocomplete
         placeholder="Search for a city"
         [disabled]="loading()"
@@ -83,7 +83,7 @@
     <!-- Page 3: Historical Weather -->
     @if (currentPage() === 3) {
       <!-- Goat mascot and title side by side -->
-      <div class="flex items-start gap-4 mb-[-40px] relative z-10">
+      <div class="flex items-start gap-4 mb-[-40px] relative z-0">
         <!-- Goat mascot -->
         <div class="w-[114px] h-[171px] mt-[-14px]">
           <img 
@@ -101,7 +101,7 @@
         </div>
       </div>
 
-      <div class="relative z-0">
+      <div class="relative z-10">
         <!-- Calendar & Location Picker -->
         <div class="mb-4">
           <app-calendar-picker
@@ -371,10 +371,10 @@
           <circle 
             [attr.cx]="9 + (getUVPosition(getUVIndex()) / 100) * 347" 
             cy="9" 
-            r="3" 
-            fill="#FFFFFF"
-            stroke="#000000"
-            stroke-width="1"
+            r="7" 
+            fill="#26658C"
+            stroke="#FFFFFF"
+            stroke-width="3"
             class="drop-shadow-lg"
           />
           
@@ -613,10 +613,10 @@
           <circle 
             [attr.cx]="9 + (getUVPosition(getSavedUVIndex()) / 100) * 347" 
             cy="9" 
-            r="3" 
-            fill="#FFFFFF"
-            stroke="#000000"
-            stroke-width="1"
+            r="7" 
+            fill="#26658C"
+            stroke="#FFFFFF"
+            stroke-width="3"
             class="drop-shadow-lg"
           />
           
@@ -854,10 +854,10 @@
           <circle 
             [attr.cx]="9 + (getUVPosition(getSearchUVIndex()) / 100) * 347" 
             cy="9" 
-            r="3" 
-            fill="#FFFFFF"
-            stroke="#000000"
-            stroke-width="1"
+            r="7" 
+            fill="#26658C"
+            stroke="#FFFFFF"
+            stroke-width="3"
             class="drop-shadow-lg"
           />
           
@@ -1087,6 +1087,18 @@
           <div class="relative">
             <svg class="w-full h-4" viewBox="0 0 365 18" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0.339746 9L9 17.6603L17.6603 9L9 0.339746L0.339746 9ZM364.66 9L356 0.339746L347.34 9L356 17.6603L364.66 9ZM9 9V10.5H356V9V7.5H9V9Z" fill="url(#paint0_linear_uv_hist)"/>
+              
+              <!-- UV indicator -->
+              <circle 
+                [attr.cx]="9 + (getUVPosition(historicalWeatherData()!.uvi || 1) / 100) * 347" 
+                cy="9" 
+                r="7" 
+                fill="#26658C"
+                stroke="#FFFFFF"
+                stroke-width="3"
+                class="drop-shadow-lg"
+              />
+              
               <defs>
                 <linearGradient id="paint0_linear_uv_hist" x1="9" y1="17.5" x2="356" y2="17.5" gradientUnits="userSpaceOnUse">
                   <stop stop-color="#268C48"/>
