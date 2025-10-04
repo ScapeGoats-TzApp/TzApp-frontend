@@ -130,5 +130,26 @@ export class GoogleMapsService {
   isGoogleMapsLoaded(): Observable<boolean> {
     return this.isLoaded.asObservable();
   }
+
+  reverseGeocode(lat: number, lng: number): Observable<any> {
+    return new Observable(observer => {
+      if (!this.placesService) {
+        observer.error('Places service not available');
+        return;
+      }
+
+      const geocoder = new google.maps.Geocoder();
+      const latlng = new google.maps.LatLng(lat, lng);
+
+      geocoder.geocode({ location: latlng }, (results: any[], status: any) => {
+        if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
+          observer.next(results[0]);
+        } else {
+          observer.error('Reverse geocoding failed');
+        }
+        observer.complete();
+      });
+    });
+  }
 }
 

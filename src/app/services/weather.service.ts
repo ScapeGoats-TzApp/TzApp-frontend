@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, map, switchMap } from 'rxjs';
+import { Observable, forkJoin, map, switchMap, catchError, of } from 'rxjs';
 import { GoogleMapsService } from './google-maps.service';
 import { environment } from '../../environments/environment';
 
@@ -185,6 +185,32 @@ export class WeatherService {
     );
   }
 
+  getWeatherDataFromCoordinates(lat: number, lng: number): Observable<WeatherResponse> {
+    return forkJoin({
+      weather: this.getWeatherFromLocation(lat, lng),
+      elevation: this.getElevationFromLocation(lat, lng),
+      location: this.getLocationFromCoordinates(lat, lng)
+    }).pipe(
+      map(({ weather, elevation, location }) => ({
+        location,
+        weather,
+        elevation
+      }))
+    );
+  }
+
+  getForecastDataFromCoordinates(lat: number, lng: number): Observable<ForecastResponse> {
+    return forkJoin({
+      forecast: this.getForecastFromLocation(lat, lng),
+      location: this.getLocationFromCoordinates(lat, lng)
+    }).pipe(
+      map(({ forecast, location }) => ({
+        location,
+        forecast
+      }))
+    );
+  }
+
   private getLocationFromCity(cityName: string): Observable<Location> {
     const url = `${this.GOOGLE_GEOCODING_URL}?address=${encodeURIComponent(cityName)}&key=${this.GOOGLE_API_KEY}`;
     
@@ -210,6 +236,22 @@ export class WeatherService {
         lat: place.geometry.location.lat(),
         lng: place.geometry.location.lng(),
         address: place.formatted_address
+      }))
+    );
+  }
+
+  private getLocationFromCoordinates(lat: number, lng: number): Observable<Location> {
+    return this.googleMapsService.reverseGeocode(lat, lng).pipe(
+      map((result: any) => ({
+        lat,
+        lng,
+        address: result.formatted_address
+      })),
+      // Fallback to coordinates if reverse geocoding fails
+      catchError(() => of({
+        lat,
+        lng,
+        address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`
       }))
     );
   }
