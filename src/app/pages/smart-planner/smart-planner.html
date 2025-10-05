@@ -220,8 +220,12 @@
               [class.opacity-40]="!isCurrentMonth(date)"
               [class.bg-white/60]="isCurrentMonth(date) && !isTopDay(date)"
               [class.bg-cyan]="isTopDay(date) && isCurrentMonth(date)"
-              [class.shadow-lg]="isTopDay(date)"
-              [class.scale-105]="isTopDay(date)"
+              [class.shadow-xl]="isTopDay(date)"
+              [class.scale-110]="isTopDay(date)"
+              [class.border-4]="isTopDay(date)"
+              [class.border-yellow-300]="isTopDay(date)"
+              [class.ring-2]="isTopDay(date)"
+              [class.ring-yellow-200]="isTopDay(date)"
             >
               <div class="text-center">
                 <div 
@@ -246,7 +250,16 @@
 
         <!-- Top Days List -->
         <div class="mt-8">
-          <h4 class="text-navy font-bold text-lg mb-4 uppercase" style="letter-spacing: -0.5px;">Top 5 Days:</h4>
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-navy font-bold text-lg uppercase" style="letter-spacing: -0.5px;">Top 5 Days:</h4>
+            <button 
+              (click)="exportToCSV()"
+              class="csv-export-btn text-white px-4 py-2 rounded-[20px] border-2 border-cyan font-bold text-sm uppercase"
+              style="letter-spacing: -0.5px;"
+            >
+              📊 Export CSV
+            </button>
+          </div>
           @for (day of topDays(); track day.dateStr; let i = $index) {
             <div class="bg-white/70 rounded-[20px] border-2 border-cyan/30 p-4 mb-3 shadow-md hover:shadow-lg transition-shadow">
               <div class="flex justify-between items-center mb-2">

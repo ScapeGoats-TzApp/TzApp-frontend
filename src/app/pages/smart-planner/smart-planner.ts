@@ -110,6 +110,7 @@ export class SmartPlanner implements OnInit {
 
   loading = signal(false);
   topDays = signal<DayScore[]>([]);
+  allDays = signal<DayScore[]>([]);
   showResults = signal(false);
   errorMessage = signal<string | null>(null);
 
@@ -200,8 +201,10 @@ export class SmartPlanner implements OnInit {
 
     this.oneCallService.getMonthData(location.lat, location.lon, month, year).subscribe({
       next: (data) => {
-        const scores = this.calculateBestDays(data, event);
-        this.topDays.set(scores);
+        const allScores = this.calculateAllDays(data, event);
+        const topScores = allScores.sort((a, b) => b.score - a.score).slice(0, 5);
+        this.allDays.set(allScores);
+        this.topDays.set(topScores);
         this.showResults.set(true);
         this.loading.set(false);
       },
@@ -213,8 +216,8 @@ export class SmartPlanner implements OnInit {
     });
   }
 
-  // Calculate best days using the scoring algorithm
-  private calculateBestDays(monthData: DailySummaryResponse[], eventType: string): DayScore[] {
+  // Calculate all days using the scoring algorithm
+  private calculateAllDays(monthData: DailySummaryResponse[], eventType: string): DayScore[] {
     const criteria = this.EVENT_CRITERIA[eventType];
     const scores: DayScore[] = [];
 
@@ -239,15 +242,21 @@ export class SmartPlanner implements OnInit {
       });
     });
 
-    // Sort by score descending and return top 5
-    const topDays = scores.sort((a, b) => b.score - a.score).slice(0, 5);
+    // Sort by score descending
+    const sortedScores = scores.sort((a, b) => b.score - a.score);
     
-    console.log(`\n=== Top 5 days for ${eventType} ===`);
-    topDays.forEach((day, index) => {
+    console.log(`\n=== All days for ${eventType} (sorted by score) ===`);
+    sortedScores.forEach((day, index) => {
       console.log(`${index + 1}. ${day.dateStr}: Score = ${day.score.toFixed(2)}`);
     });
     
-    return topDays;
+    return sortedScores;
+  }
+
+  // Calculate best days using the scoring algorithm (legacy method for compatibility)
+  private calculateBestDays(monthData: DailySummaryResponse[], eventType: string): DayScore[] {
+    const allScores = this.calculateAllDays(monthData, eventType);
+    return allScores.slice(0, 5);
   }
 
   // Score calculation algorithm (TypeScript version of Python code)
@@ -460,5 +469,70 @@ export class SmartPlanner implements OnInit {
         disabled: isPastMonth || isTooFarFuture
       };
     });
+  }
+
+  // CSV Export functionality
+  exportToCSV(): void {
+    const allDaysData = this.allDays();
+    const eventType = this.selectedEvent();
+    const location = this.selectedLocation();
+    const month = this.selectedMonth();
+    const year = this.selectedYear();
+
+    if (!allDaysData.length) {
+      this.errorMessage.set('No data to export');
+      return;
+    }
+
+    // Create CSV headers
+    const headers = [
+      'Date',
+      'Score',
+      'Temperature (°C)',
+      'Precipitation (mm)',
+      'Wind Speed (m/s)',
+      'Humidity (%)',
+      'Cloud Cover (%)',
+      'Event Type',
+      'Location',
+      'Month/Year'
+    ];
+
+    // Create CSV rows
+    const csvRows = allDaysData.map(day => [
+      day.dateStr,
+      day.score.toFixed(2),
+      day.temp.toFixed(1),
+      day.precip.toFixed(1),
+      day.wind.toFixed(1),
+      day.humidity.toFixed(0),
+      day.clouds.toFixed(0),
+      eventType || 'Unknown',
+      location?.address || 'Unknown',
+      `${month}/${year}`
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [headers, ...csvRows]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    
+    // Generate filename with event type, location, and date
+    const locationName = location?.address?.split(',')[0]?.replace(/\s+/g, '_') || 'Unknown_Location';
+    const eventName = eventType?.replace(/\s+/g, '_') || 'Unknown_Event';
+    const filename = `${eventName}_${locationName}_${year}_${String(month).padStart(2, '0')}.csv`;
+    
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 }
