@@ -5,10 +5,17 @@
     <div class="flex justify-center mb-8">
       <div class="relative w-[185px] h-[185px]">
         <img 
-          src="https://api.builder.io/api/v1/image/assets/TEMP/70d690321e018ce2d4950ed60a712bea69803968?width=381" 
+          [src]="getProfilePicPath(selectedProfilePic())" 
           alt="Profile" 
-          class="avatar-image"
+          class="avatar-image cursor-pointer hover:opacity-80 transition-opacity"
+          (click)="openProfilePicSelector()"
         />
+        <!-- Edit icon overlay -->
+        <div class="absolute bottom-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
+          <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+          </svg>
+        </div>
       </div>
     </div>
 
@@ -249,6 +256,71 @@
             style="letter-spacing: -0.16px;"
           >
             CLOSE
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Profile Picture Selection Modal -->
+  @if (showProfilePicSelector()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeProfilePicSelector()"></div>
+      
+      <!-- Modal Content -->
+      <div class="relative bg-white/95 backdrop-blur-sm rounded-[20px] border border-cyan shadow-2xl max-w-[90vw] max-h-[90vh] overflow-hidden">
+        <!-- Header -->
+        <div class="bg-cyan-light/20 text-center border-b border-cyan p-4 flex items-center justify-between">
+          <h2 class="text-navy-90 font-bold text-2xl uppercase" style="letter-spacing: -0.24px;">
+            CHOOSE PROFILE PICTURE
+          </h2>
+          <button 
+            (click)="closeProfilePicSelector()"
+            class="w-8 h-8 flex items-center justify-center hover:bg-white/30 rounded-lg transition-colors"
+          >
+            <svg class="w-6 h-6 text-navy" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Profile Pictures Grid -->
+        <div class="p-6">
+          <div class="grid grid-cols-2 gap-4">
+            @for (pic of availableProfilePics; track pic) {
+              <div 
+                class="relative cursor-pointer group"
+                (click)="selectProfilePic(pic)"
+              >
+                <img 
+                  [src]="getProfilePicPath(pic)" 
+                  [alt]="'Profile ' + pic"
+                  class="w-full h-32 object-cover rounded-lg border-2 transition-all duration-200"
+                  [class.border-cyan]="selectedProfilePic() === pic"
+                  [class.border-gray-300]="selectedProfilePic() !== pic"
+                  [class.group-hover:border-cyan]="selectedProfilePic() !== pic"
+                />
+                @if (selectedProfilePic() === pic) {
+                  <div class="absolute top-2 right-2 w-6 h-6 bg-cyan rounded-full flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-cyan-light/10 border-t border-cyan p-4 flex justify-center">
+          <button 
+            (click)="closeProfilePicSelector()"
+            class="bg-cyan-light/20 rounded-[20px] border-b border-cyan px-6 py-2 text-navy-90 font-bold text-base uppercase hover:bg-cyan-light/30 transition-colors"
+            style="letter-spacing: -0.16px;"
+          >
+            DONE
           </button>
         </div>
       </div>

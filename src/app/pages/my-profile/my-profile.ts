@@ -2,6 +2,7 @@ import { Component, signal, OnInit, ViewChild, ElementRef, AfterViewInit } from 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationComponent } from '../../components/navigation';
+import { ProfilePictureService } from '../../services/profile-picture.service';
 
 @Component({
   selector: 'app-my-profile',
@@ -25,6 +26,21 @@ export class MyProfile implements OnInit {
   
   // Theme functionality
   isDarkTheme = signal(false);
+  
+  // Profile picture functionality
+  showProfilePicSelector = signal(false);
+  selectedProfilePic = signal('profile1.jpg');
+  availableProfilePics = [
+    'profile1.jpg',
+    'profile2.png', 
+    'profile3.png',
+    'profile4.png',
+    'profile5.png',
+    'profile6.png',
+    'profile7.png'
+  ];
+
+  constructor(private profilePictureService: ProfilePictureService) {}
 
   ngOnInit(): void {
     // Load user name from local storage on component initialization
@@ -39,6 +55,9 @@ export class MyProfile implements OnInit {
       this.isDarkTheme.set(savedTheme === 'dark');
       this.applyTheme(savedTheme === 'dark');
     }
+    
+    // Load profile picture from service
+    this.selectedProfilePic.set(this.profilePictureService.getSelectedProfilePic()());
   }
 
   openTermsPopup(): void {
@@ -135,5 +154,24 @@ export class MyProfile implements OnInit {
       root.classList.add('light-theme');
       root.classList.remove('dark-theme');
     }
+  }
+
+  // Profile picture functionality
+  openProfilePicSelector(): void {
+    this.showProfilePicSelector.set(true);
+  }
+
+  closeProfilePicSelector(): void {
+    this.showProfilePicSelector.set(false);
+  }
+
+  selectProfilePic(picName: string): void {
+    this.profilePictureService.setSelectedProfilePic(picName);
+    this.selectedProfilePic.set(picName);
+    this.closeProfilePicSelector();
+  }
+
+  getProfilePicPath(picName?: string): string {
+    return this.profilePictureService.getProfilePicPath(picName);
   }
 }

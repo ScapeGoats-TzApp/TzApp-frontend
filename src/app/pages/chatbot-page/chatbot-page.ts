@@ -6,6 +6,7 @@ import { NavigationComponent } from '../../components/navigation';
 import { Nl2brPipe } from '../../pipes/nl2br.pipe';
 import { UserProfileService } from '../../services/user-profile.service';
 import { ChatService, ChatMessage, SavedChat } from '../../services/chat.service';
+import { ProfilePictureService } from '../../services/profile-picture.service';
 
 // Remove duplicate interface - using the one from ChatService
 
@@ -34,22 +35,16 @@ export class ChatbotPage implements OnInit, AfterViewChecked {
   constructor(
     private http: HttpClient,
     private userProfileService: UserProfileService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    public profilePictureService: ProfilePictureService
   ) {
     // Generate a unique session ID
     this.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
 
   ngOnInit() {
-    // Load user's goat image
-    this.userGoatImageUrl = this.userProfileService.getCurrentGoatImageUrl();
-    
-    // Subscribe to user profile changes
-    this.userProfileService.getUserProfile().subscribe(profile => {
-      if (profile) {
-        this.userGoatImageUrl = profile.goatImageUrl;
-      }
-    });
+    // Load user's profile picture from the new service (default to profile1.jpg)
+    this.userGoatImageUrl = this.profilePictureService.getProfilePicPath();
 
     // Subscribe to current chat changes
     this.chatService.getCurrentChat().subscribe(chat => {

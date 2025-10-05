@@ -1,15 +1,16 @@
 <div class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
-  <!-- Goat mascot -->
-  <div class="mascot-container">
+  <!-- User Profile Picture -->
+  <div class="profile-container w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden relative flex items-center justify-center border-4 border-white/30 shadow-2xl mb-8">
     <img 
-      src="https://api.builder.io/api/v1/image/assets/TEMP/ba9f7d67248554e5479eb4ce837c2552328cd99d?width=514" 
-      alt="Goat mascot" 
+      [src]="profilePictureService.getProfilePicPath()" 
+      [alt]="'Profile of ' + userName" 
+      class="w-full h-full object-cover"
     />
   </div>
 
-  <!-- Hi user text -->
-  <h1 class="text-white text-center font-bold text-4xl mb-12" style="text-shadow: 0 2px 7px #011C40; letter-spacing: -2.52px;">
-    Hi user!
+  <!-- Personalized Greeting -->
+  <h1 class="text-white text-center font-bold text-4xl mb-12 capitalize" style="text-shadow: 0 2px 7px #011C40; letter-spacing: -2.52px;">
+    Hi {{ userName }}!
   </h1>
 
   <!-- Loading dots -->

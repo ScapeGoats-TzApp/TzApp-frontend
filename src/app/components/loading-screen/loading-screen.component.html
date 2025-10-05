@@ -1,20 +1,20 @@
 <div class="loading-screen min-h-screen w-full flex flex-col items-center justify-between py-8 px-4 sm:py-12 md:py-16 relative overflow-hidden">
   
-  <!-- Mascot Image -->
+  <!-- User Profile Picture -->
   <div class="flex-1 flex items-center justify-center w-full max-w-md mx-auto mt-8 sm:mt-12 md:mt-16">
-    <div class="mascot-container w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden relative flex items-center justify-center">
+    <div class="profile-container w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full overflow-hidden relative flex items-center justify-center border-4 border-white/30 shadow-2xl">
       <img 
-        src="https://api.builder.io/api/v1/image/assets/TEMP/ba9f7d67248554e5479eb4ce837c2552328cd99d?width=514" 
-        alt="Scape Goat Mascot" 
-        class="w-full h-auto object-contain relative z-10"
+        [src]="profilePictureService.getProfilePicPath()" 
+        [alt]="'Profile of ' + userName" 
+        class="w-full h-full object-cover"
       />
     </div>
   </div>
 
-  <!-- Hi User Text -->
+  <!-- Personalized Greeting -->
   <div class="text-center mb-4">
     <h1 class="greeting-text text-4xl sm:text-5xl md:text-6xl font-bold text-white capitalize">
-      Hi User!
+      Hi {{ userName }}!
     </h1>
   </div>
 
