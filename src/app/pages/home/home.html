@@ -126,7 +126,18 @@
         <!-- Saved Historical Weather List (only show when no search is active) -->
         @if (savedHistoricalWeather().length > 0 && !historicalWeatherData()) {
           <div class="mb-4">
-            <p class="text-navy-50 font-bold text-xs uppercase mb-2" style="letter-spacing: -0.11px;">Saved Weather</p>
+            <div class="flex items-center justify-between mb-2">
+              <p class="text-navy-50 font-bold text-xs uppercase" style="letter-spacing: -0.11px;">Saved Weather</p>
+              <button 
+                (click)="downloadCSV()" 
+                class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded-lg text-xs transition-colors flex items-center gap-1">
+                <svg class="w-3 h-3" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 1L8 11M8 11L5 8M8 11L11 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 13L2 14C2 14.5523 2.44772 15 3 15L13 15C13.5523 15 14 14.5523 14 14L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                CSV
+              </button>
+            </div>
             <div class="space-y-2">
               @for (weather of savedHistoricalWeather(); track weather.id) {
                 <div class="bg-cyan-light/20 rounded-[20px] border-b border-cyan p-3">

@@ -828,4 +828,100 @@ export class HomePage implements OnInit {
       return 'assets/weather_goats/sunny.png';
     }
   }
+
+  // Download CSV with saved historical weather data
+  downloadCSV(): void {
+    const savedWeather = this.savedHistoricalWeather();
+    
+    if (savedWeather.length === 0) {
+      console.warn('No saved weather data to export');
+      return;
+    }
+
+    // CSV headers
+    const headers = [
+      'Location',
+      'Date',
+      'Type',
+      'Temperature Min (°C)',
+      'Temperature Max (°C)',
+      'Temperature Current (°C)',
+      'Temperature Feels Like (°C)',
+      'Temperature Morning (°C)',
+      'Temperature Afternoon (°C)',
+      'Temperature Evening (°C)',
+      'Temperature Night (°C)',
+      'Humidity (%)',
+      'Pressure (mbar)',
+      'Cloudiness (%)',
+      'Precipitation (mm)',
+      'Wind Speed (m/s)',
+      'Wind Direction (°)',
+      'UV Index',
+      'Visibility (km)',
+      'Weather Description',
+      'Latitude',
+      'Longitude',
+      'Elevation (m)',
+      'Saved At'
+    ];
+
+    // Convert data to CSV rows
+    const csvRows = [headers.join(',')];
+    
+    savedWeather.forEach(weather => {
+      const data = weather.weatherData;
+      const row = [
+        this.escapeCSV(weather.locationName),
+        this.escapeCSV(weather.date),
+        this.escapeCSV(data.type),
+        data.temperature.min?.toString() || '',
+        data.temperature.max?.toString() || '',
+        data.temperature.current?.toString() || '',
+        data.temperature.feels_like?.toString() || '',
+        data.temperature.morning?.toString() || '',
+        data.temperature.afternoon?.toString() || '',
+        data.temperature.evening?.toString() || '',
+        data.temperature.night?.toString() || '',
+        data.humidity?.toString() || '',
+        data.pressure?.toString() || '',
+        data.cloudiness?.toString() || '',
+        data.precipitation?.toString() || '',
+        data.wind.speed?.toString() || '',
+        data.wind.direction?.toString() || '',
+        data.uvi?.toString() || '',
+        data.visibility?.toString() || '',
+        this.escapeCSV(data.weather?.description || ''),
+        data.location.lat?.toString() || '',
+        data.location.lon?.toString() || '',
+        data.elevation?.elevation?.toString() || '',
+        this.escapeCSV(weather.savedAt.toISOString())
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    // Create and download the CSV file
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `saved_weather_data_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  // Helper method to escape CSV values
+  private escapeCSV(value: string): string {
+    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+      return `"${value.replace(/"/g, '""')}"`;
+    }
+    return value;
+  }
 }
