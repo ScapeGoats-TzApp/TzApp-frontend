@@ -93,21 +93,6 @@
   }
 }
 
-/* Enhanced styling for top 5 days */
-.top-day-highlight {
-  animation: pulse-glow 2s ease-in-out infinite alternate;
-  box-shadow: 0 0 20px rgba(84, 172, 191, 0.6), 0 0 40px rgba(84, 172, 191, 0.3);
-}
-
-@keyframes pulse-glow {
-  0% {
-    box-shadow: 0 0 15px rgba(84, 172, 191, 0.5), 0 0 30px rgba(84, 172, 191, 0.2);
-  }
-  100% {
-    box-shadow: 0 0 25px rgba(84, 172, 191, 0.8), 0 0 50px rgba(84, 172, 191, 0.4);
-  }
-}
-
 /* CSV Export button styling */
 .csv-export-btn {
   background: linear-gradient(135deg, #54ACBF 0%, #4A9BAE 100%);
