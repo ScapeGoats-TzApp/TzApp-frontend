@@ -9,17 +9,20 @@
   
   <div class="max-w-[800px] mx-auto px-6 pt-8">
     <!-- Header -->
-    <div class="relative mb-8">
-      <h1 class="text-navy font-bold text-[48px] uppercase leading-[45px] text-left" style="letter-spacing: -2.8px;">
+    <div class="relative mb-2">
+      <h1 class="font-bold text-[56px] uppercase leading-[52px] text-left" style="font-family: 'Montserrat'; font-style: normal; font-weight: 700; letter-spacing: -0.07em; color: #011C40;">
         PLAN YOUR WAY!
       </h1>
     </div>
-    <!-- PR -->
-    <!-- Border line -->
-    <div class="w-full h-px border-t-2 border-cyan mb-8"></div>
+  </div>
+  
+  <!-- Border line - full width -->
+  <div class="w-full h-px border-t-2 border-cyan mb-8"></div>
+  
+  <div class="max-w-[800px] mx-auto px-6">
 
     <!-- Event Type Dropdown -->
-    <div class="mb-6">
+    <div class="mb-3">
       <div class="relative">
         <!-- Dropdown Trigger Button -->
         <button 
@@ -95,9 +98,9 @@
     </div>
 
     <!-- Date, Location, and When/Where Section -->
-    <div class="mb-8">
+    <div class="mb-3">
       <!-- Top Row: Date/Location inputs and When/Where heading -->
-      <div class="flex flex-row gap-4 mb-6 items-center">
+      <div class="flex flex-row gap-4 mb-8 items-center">
         <!-- Date and Location Inputs Row -->
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center flex-1">
           <!-- Date Picker -->
@@ -184,19 +187,21 @@
         </div>
 
         <!-- When and Where Heading - positioned next to inputs -->
-        <div class="flex items-center">
-          <h2 class="text-navy font-bold text-[28px] lg:text-[36px] uppercase leading-[26px] lg:leading-[34px]" style="letter-spacing: -0.32px;">
+        <div class="flex items-center justify-center">
+          <!-- <h2 class="font-bold text-[72px] uppercase leading-[31px] text-center" style="font-family: 'Montserrat'; font-style: normal; font-weight: 700; letter-spacing: 0.0em; color: rgba(1, 28, 64, 0.9);"> -->
+          <!-- <h2 class="font-bold text-[48px] uppercase leading-[45px] text-center" style="font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-size: 48px; line-height: 45px; letter-spacing: 0.0em; color: rgba(1, 28, 64, 0.9);"></h2> -->
+          <h2 class="font-bold text-[36px] uppercase leading-[34px] text-center" style="font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-size: 28px !important; line-height: 26px !important; letter-spacing: 0.0em; color: rgba(1, 28, 64, 0.9);">
             WHEN AND<br>WHERE
           </h2>
         </div>
       </div>
 
       <!-- Bottom Row: Start Button -->
-      <div class="flex items-center justify-center">
+      <div class="flex items-center justify-center -mt-4">
         <button 
           (click)="startLookin()"
           [disabled]="loading() || !selectedEvent() || !selectedLocation()"
-          class="relative bg-white/40 rounded-[25px] border-2 border-cyan pl-10 pr-4 py-1.5 hover:bg-white/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex-shrink-0"
+          class="relative bg-white/40 rounded-[25px] border-2 border-cyan pl-10 pr-6 py-2 hover:bg-white/60 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex-shrink-0 min-w-[180px]"
         >
           @if (loading()) {
             <div class="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6">
@@ -213,7 +218,7 @@
             />
           }
           <span class="text-navy font-bold text-xs uppercase leading-tight" style="letter-spacing: -0.11px;">
-            START<br>LOOKIN'
+            START LOOKIN'
           </span>
         </button>
       </div>
@@ -229,7 +234,7 @@
       <div class="fixed inset-0 z-40" (click)="showEventDropdown.set(false)"></div>
     }
 
-    <!-- Messages -->
+    <!-- Messages
     @if (selectedLocation()) {
       <div class="mb-4 text-sm text-navy-70 text-center">
         📍 {{ selectedLocation()!.address }}
@@ -240,7 +245,7 @@
       <div class="mb-4 p-4 bg-red-100 border-2 border-red-300 rounded-[20px] text-red-700 text-sm text-center shadow-md">
         {{ errorMessage() }}
       </div>
-    }
+    } -->
 
     <!-- Calendar with Results -->
     @if (showResults()) {

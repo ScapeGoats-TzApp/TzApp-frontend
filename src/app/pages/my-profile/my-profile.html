@@ -36,35 +36,37 @@
           />
         </button>
       } @else {
-        <div class="flex items-center gap-2">
+        <div class="flex flex-col sm:flex-row items-center gap-2">
           <input 
             type="text" 
             [(ngModel)]="tempUserName"
             class="text-white font-bold text-4xl capitalize text-center bg-transparent border-b-2 border-white/50 focus:border-white focus:outline-none px-2 py-1"
-            style="text-shadow: 0 2px 7px #011C40; letter-spacing: 0px; min-width: 200px;"
+            style="text-shadow: 0 2px 7px #011C40; letter-spacing: 0px; min-width: 200px; max-width: 100%;"
             placeholder="Enter name"
             (keydown.enter)="saveUserName()"
             (keydown.escape)="cancelEditingName()"
             #nameInput
           />
-          <button 
-            (click)="saveUserName()"
-            class="w-8 h-8 flex items-center justify-center bg-green-500/80 hover:bg-green-500 rounded-lg transition-colors"
-            title="Save"
-          >
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-          </button>
-          <button 
-            (click)="cancelEditingName()"
-            class="w-8 h-8 flex items-center justify-center bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors"
-            title="Cancel"
-          >
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
+          <div class="flex items-center gap-2">
+            <button 
+              (click)="saveUserName()"
+              class="w-8 h-8 flex items-center justify-center bg-green-500/80 hover:bg-green-500 rounded-lg transition-colors"
+              title="Save"
+            >
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </button>
+            <button 
+              (click)="cancelEditingName()"
+              class="w-8 h-8 flex items-center justify-center bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors"
+              title="Cancel"
+            >
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
         </div>
       }
     </div>

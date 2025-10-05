@@ -95,9 +95,9 @@ export class SmartPlanner implements OnInit {
     { id: 'festival', label: 'festival' },
     { id: 'pool_party', label: 'pool party' },
     { id: 'concert', label: 'concert' },
-    { id: 'drumetie', label: 'drumetie' },
-    { id: 'nunta', label: 'nunta' },
-    { id: 'zi_nastere', label: 'zi nastere' }
+    { id: 'drumetie', label: 'hike' },
+    { id: 'nunta', label: 'wedding' },
+    { id: 'zi_nastere', label: 'birhtday' }
   ];
 
   // Component state
