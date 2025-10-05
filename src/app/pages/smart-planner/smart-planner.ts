@@ -107,6 +107,10 @@ export class SmartPlanner implements OnInit {
   selectedMonth = signal<number>(new Date().getMonth() + 1);
   selectedYear = signal<number>(new Date().getFullYear());
   monthInput = signal('');
+  
+  // Event dropdown state
+  showEventDropdown = signal(false);
+  eventSearchQuery = signal('');
 
   loading = signal(false);
   topDays = signal<DayScore[]>([]);
@@ -137,11 +141,27 @@ export class SmartPlanner implements OnInit {
   // Event selection
   selectEvent(eventId: string): void {
     this.selectedEvent.set(eventId);
+    this.showEventDropdown.set(false);
+    this.eventSearchQuery.set('');
+  }
+
+  // Toggle event dropdown
+  toggleEventDropdown(): void {
+    this.showEventDropdown.set(!this.showEventDropdown());
+    if (!this.showEventDropdown()) {
+      this.eventSearchQuery.set('');
+    }
+  }
+
+  // Get selected event label
+  getSelectedEventLabel(): string {
+    const event = this.eventTypes.find(e => e.id === this.selectedEvent());
+    return event ? event.label : '';
   }
 
   // Filter events based on search
   get filteredEvents() {
-    const query = this.searchQuery().toLowerCase();
+    const query = this.eventSearchQuery().toLowerCase();
     if (!query) return this.eventTypes;
     return this.eventTypes.filter(event => 
       event.label.toLowerCase().includes(query)

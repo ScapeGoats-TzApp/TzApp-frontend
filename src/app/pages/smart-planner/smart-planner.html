@@ -18,25 +18,78 @@
     <!-- Border line -->
     <div class="w-full h-px border-t-2 border-cyan mb-8"></div>
 
-    <!-- Event Type Chips (Grid Layout) -->
+    <!-- Event Type Dropdown -->
     <div class="mb-6">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
-        @for (event of filteredEvents; track event.id) {
-          <button 
-            (click)="selectEvent(event.id)"
-            class="rounded-[25px] border-2 px-4 py-2 transition-all text-sm"
-            [class.bg-cyan]="selectedEvent() === event.id"
-            [class.border-cyan]="selectedEvent() === event.id"
-            [class.bg-white/40]="selectedEvent() !== event.id"
-            [class.border-cyan]="selectedEvent() !== event.id"
+      <div class="relative">
+        <!-- Dropdown Trigger Button -->
+        <button 
+          (click)="toggleEventDropdown()"
+          class="w-fit min-w-[330px] bg-white/40 rounded-[25px] border-2 border-cyan px-4 py-3 text-left flex items-center justify-between hover:bg-white/60 transition-all"
+        >
+          <span 
+            class="font-bold text-sm"
+            [class.text-navy]="selectedEvent()"
+            [class.text-gray-400]="!selectedEvent()"
+            style="letter-spacing: -1.05px;"
           >
-            <span 
-              class="font-bold lowercase whitespace-nowrap" 
-              [class.text-white]="selectedEvent() === event.id"
-              [class.text-gray-400]="selectedEvent() !== event.id"
-              style="letter-spacing: -1.05px;"
-            >{{ event.label }}</span>
-          </button>
+            {{ selectedEvent() ? getSelectedEventLabel() : 'Select event type...' }}
+          </span>
+          <svg 
+            class="w-5 h-5 text-navy transition-transform duration-200"
+            [class.rotate-180]="showEventDropdown()"
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        @if (showEventDropdown()) {
+          <div class="absolute top-full left-0 z-50 mt-2 bg-white/95 backdrop-blur-sm rounded-[20px] border-2 border-cyan shadow-lg max-h-60 overflow-y-auto w-[280px]">
+            <!-- Search Input -->
+            <div class="p-4 border-b border-cyan/30">
+              <input 
+                type="text" 
+                [(ngModel)]="eventSearchQuery"
+                placeholder="Search events..."
+                class="w-full bg-transparent text-navy font-bold text-sm placeholder:text-gray-400 placeholder:lowercase focus:outline-none"
+                style="letter-spacing: -1.05px;"
+              />
+            </div>
+            
+            <!-- Event Options -->
+            <div class="py-2">
+              @for (event of filteredEvents; track event.id) {
+                <button 
+                  (click)="selectEvent(event.id)"
+                  class="w-full px-6 py-4 text-left hover:bg-cyan/20 transition-colors flex items-center justify-between dropdown-option"
+                  [class.bg-cyan/10]="selectedEvent() === event.id"
+                >
+                  <span 
+                    class="font-bold text-sm lowercase"
+                    [class.text-cyan]="selectedEvent() === event.id"
+                    [class.text-navy]="selectedEvent() !== event.id"
+                    style="letter-spacing: -1.05px;"
+                  >
+                    {{ event.label }}
+                  </span>
+                  @if (selectedEvent() === event.id) {
+                    <svg class="w-4 h-4 text-cyan" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                  }
+                </button>
+              }
+              
+              @if (filteredEvents.length === 0) {
+                <div class="px-6 py-4 text-gray-500 text-sm text-center">
+                  No events found
+                </div>
+              }
+            </div>
+          </div>
         }
       </div>
     </div>
@@ -169,6 +222,11 @@
     <!-- Calendar Backdrop -->
     @if (showCalendarPopup()) {
       <div class="fixed inset-0 z-40" (click)="showCalendarPopup.set(false)"></div>
+    }
+
+    <!-- Event Dropdown Backdrop -->
+    @if (showEventDropdown()) {
+      <div class="fixed inset-0 z-40" (click)="showEventDropdown.set(false)"></div>
     }
 
     <!-- Messages -->
