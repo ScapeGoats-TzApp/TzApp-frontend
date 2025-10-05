@@ -96,10 +96,29 @@ button {
   backdrop-filter: blur(8px);
 }
 
-// Chat management buttons
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+// Chat management buttons - Enhanced styling
+.chat-management-buttons {
+  button {
+    min-height: 44px;
+    min-width: 120px;
+    transition: all 0.2s ease-in-out;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 // Hover effects for saved chat items
@@ -154,7 +173,7 @@ button:disabled {
 // Mobile responsive improvements
 @media (max-width: 640px) {
   .chatbot-container {
-    padding-bottom: 5rem; // Reduce bottom padding on mobile
+    padding-bottom: 6rem; // Increased bottom padding to avoid navbar overlap
   }
   
   // Smaller message bubbles on mobile
@@ -166,6 +185,19 @@ button:disabled {
   button {
     min-height: 44px;
     min-width: 44px;
+  }
+  
+  // Chat management buttons on mobile
+  .chat-management-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+    
+    button {
+      width: 100%;
+      min-width: auto;
+      font-size: 0.875rem;
+      padding: 0.75rem 1rem;
+    }
   }
   
   // Improve text readability on mobile
@@ -189,6 +221,6 @@ button:disabled {
 // Tablet and larger screens
 @media (min-width: 641px) {
   .chatbot-container {
-    padding-bottom: 6rem;
+    padding-bottom: 7rem; // Increased padding for larger screens
   }
 }

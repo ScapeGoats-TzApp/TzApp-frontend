@@ -1,4 +1,4 @@
-<div class="min-h-screen pb-24 flex flex-col chatbot-container">
+<div class="min-h-screen pb-32 flex flex-col chatbot-container">
   <div class="max-w-[412px] w-full mx-auto px-2 sm:px-[6px] pt-4 sm:pt-7 flex-1 flex flex-col">
     <!-- Chat Messages Area -->
     <div class="flex-1 overflow-y-auto mb-2" #messagesContainer>
@@ -75,8 +75,33 @@
       </div>
     </div>
 
+    <!-- Chat Management Buttons - Moved to be more visible -->
+    <div class="mt-auto mb-3">
+      <div class="flex justify-center gap-3 sm:gap-4 chat-management-buttons">
+        <button 
+          (click)="saveChat()"
+          [disabled]="!hasMessagesToSave()"
+          class="bg-cyan/20 hover:bg-cyan/30 text-cyan font-bold text-sm px-4 py-2 rounded-[15px] border border-cyan/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-cyan/20 flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+          Save Chat
+        </button>
+        <button 
+          (click)="clearChat()"
+          class="bg-red-500/20 hover:bg-red-500/30 text-red-600 font-bold text-sm px-4 py-2 rounded-[15px] border border-red-500/50 transition-all duration-200 flex items-center gap-2"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          Clear Chat
+        </button>
+      </div>
+    </div>
+
     <!-- Input Area -->
-    <div class="mt-auto">
+    <div class="mt-auto mb-4">
       <div class="relative bg-white/20 rounded-[20px] border-b border-cyan p-3 sm:p-4">
         <input 
           type="text" 
@@ -94,23 +119,6 @@
           <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
           </svg>
-        </button>
-      </div>
-      
-      <!-- Chat Management Buttons -->
-      <div class="flex justify-center gap-3 sm:gap-4 mt-2">
-        <button 
-          (click)="saveChat()"
-          [disabled]="!hasMessagesToSave()"
-          class="text-xs text-goat-sky hover:text-cyan transition-colors disabled:text-gray-400 disabled:cursor-not-allowed px-2 py-1"
-        >
-          Save Chat
-        </button>
-        <button 
-          (click)="clearChat()"
-          class="text-xs text-goat-sky hover:text-cyan transition-colors px-2 py-1"
-        >
-          Clear Chat
         </button>
       </div>
     </div>
